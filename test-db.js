@@ -24,15 +24,13 @@ async function main() {
   try {
     const sqlQuery = `
       SELECT 
-        C.IdCancelacion,
-        COALESCE(SUM(DC.Cantidad * DC.Precio), 0) AS MontoCancelado
-      FROM tblCancelaciones C
-      LEFT JOIN tblDetalleCancelaciones DC ON C.IdCancelacion = DC.IdCancelacion
-      WHERE C.IdCancelacion IN (2682, 2681, 2680, 2679)
-      GROUP BY C.IdCancelacion
+        VentaEn,
+        COUNT(*) as TotalVentas
+      FROM tblVentas
+      GROUP BY VentaEn
     `;
     const [rows] = await connection.query(sqlQuery);
-    console.log('Test Cancelaciones SUM:');
+    console.log('Ventas por VentaEn:');
     console.table(rows);
   } catch (err) {
     console.error(err);
