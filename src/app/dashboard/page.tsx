@@ -388,7 +388,9 @@ export default function DashboardPage() {
     setError('');
     try {
       const params = new URLSearchParams({ groupBy: g, dateFrom: from, dateTo: to, trendGroup: tg });
-      const res = await fetch(`/api/dashboard/sales?${params}`);
+      const res = await fetch(`/api/dashboard/sales?${params}`, {
+        cache: 'no-store'
+      });
       if (!res.ok) throw new Error('Error al cargar datos');
       setData(await res.json());
     } catch (e: any) {

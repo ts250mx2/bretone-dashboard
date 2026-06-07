@@ -13,7 +13,6 @@ import {
     LayoutGrid,
     Flame,
     Package,
-    BarChart3,
     ClipboardList,
     UtensilsCrossed,
     Users,
@@ -41,18 +40,12 @@ const sidebarItems: SidebarItem[] = [
             { name: 'Tendencias de Venta', href: '/dashboard/ventas/tendencias', icon: TrendingUp },
             { name: 'Mapa de Calor', href: '/dashboard/ventas/mapadecalor', icon: Flame },
             { name: 'Categorías Global', href: '/dashboard/ventas/categorias-global', icon: LayoutGrid },
+            { name: 'Tipo de Venta', href: '/dashboard/ventas/tipo', icon: UtensilsCrossed },
             { name: 'Operaciones', href: '/dashboard/ventas/operaciones', icon: ClipboardList },
             { name: 'Reporte Ventas', href: '/dashboard/reportes/ventas', icon: FileText },
             { name: 'Productos Global', href: '/dashboard/ventas/productos-global', icon: Package },
             { name: 'Retiros', href: '/dashboard/ventas/retiros', icon: DollarSign },
             { name: 'Cancelaciones', href: '/dashboard/ventas/cancelaciones', icon: XCircle },
-        ]
-    },
-    {
-        name: 'Reportes',
-        icon: BarChart3,
-        subItems: [
-            { name: 'Margen & Rentabilidad', href: '/dashboard/reportes/margen', icon: DollarSign },
         ]
     },
 ];
@@ -68,7 +61,6 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
     const pathname = usePathname();
     const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
         'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes'),
-        'Reportes': pathname.includes('/reportes'),
     });
 
     const toggleExpanded = (name: string) => {
@@ -82,7 +74,6 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
         } else {
             setExpandedMenus({
                 'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes'),
-                'Reportes': pathname.includes('/reportes'),
             });
         }
     }, [isCollapsed, pathname]);

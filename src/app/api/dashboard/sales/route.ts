@@ -50,10 +50,11 @@ export async function GET(req: NextRequest) {
     `;
     const kpiRows = await query(sqlKpi, filterParams);
 
+    const cancelDateFilter = dateFilter.replace(/v\.FechaVenta/g, 'C.FechaCancelacion');
     const sqlCancel = `
       SELECT COUNT(*) AS canceladas 
-      FROM tblVentas v 
-      WHERE ${dateFilter} AND v.Cancelada > 0
+      FROM tblCancelaciones C 
+      WHERE ${cancelDateFilter}
     `;
     const cancelRows = await query(sqlCancel, filterParams);
 
