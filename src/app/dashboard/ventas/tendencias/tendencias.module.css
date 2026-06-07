@@ -1,0 +1,458 @@
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-bottom: 4rem;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.titleGroup h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.exportBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--r-lg);
+  background: linear-gradient(135deg, #149D92 0%, #0F7F76 100%);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(20, 157, 146, 0.2);
+  transition: var(--ease);
+}
+
+.exportBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(20, 157, 146, 0.35);
+}
+
+/* ====== FILTER ROW ====== */
+.filterCard {
+  background: #ffffff;
+  border: 1px solid rgba(61, 28, 2, 0.08);
+  border-radius: var(--r-xl);
+  padding: 1.25rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.presets {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.presetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 1px solid rgba(61, 28, 2, 0.08);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--ease);
+}
+
+.presetBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.presetActive {
+  background: linear-gradient(135deg, #3D1C02 0%, #5A2E0C 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 4px 10px rgba(61, 28, 2, 0.15);
+}
+
+.dateRangePicker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dateInput {
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(61, 28, 2, 0.15);
+  background: #ffffff;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  min-width: 130px;
+  outline: none;
+  cursor: pointer;
+  transition: var(--ease);
+}
+
+.dateInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--pink-glow);
+}
+
+.dateSep {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* ====== KPIs ====== */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .kpiGrid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .kpiGrid { grid-template-columns: 1fr; }
+}
+
+.kpiCard {
+  background: #ffffff;
+  border: 1px solid rgba(61, 28, 2, 0.08);
+  border-radius: var(--r-xl);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--ease);
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.kpiIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kpiLabel {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpiValue {
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-top: 0.15rem;
+  color: var(--text);
+}
+
+.kpiSub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* ====== CHARTS SECTION ====== */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chartCard {
+  background: #ffffff;
+  border: 1px solid rgba(61, 28, 2, 0.08);
+  border-radius: var(--r-xl);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.chartHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.chartTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.chartSub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.granularityBtns {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--surface-2);
+  padding: 0.25rem;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(61, 28, 2, 0.06);
+}
+
+.granularityBtn {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--r-md);
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--ease);
+}
+
+.granularityActive {
+  background: #ffffff;
+  color: var(--text) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+.chartBody {
+  flex: 1;
+  position: relative;
+  min-height: 250px;
+}
+
+.chartEmpty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 4rem 2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.svg {
+  width: 100%;
+  height: 250px;
+  display: block;
+  overflow: visible;
+}
+
+.svg circle {
+  transition: r 0.15s ease, fill 0.15s ease;
+  cursor: pointer;
+}
+
+.svg circle:hover {
+  r: 6px;
+  fill: var(--primary) !important;
+}
+
+/* Day of Week Chart */
+.dayBarList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  justify-content: center;
+  height: 100%;
+  padding-top: 0.5rem;
+}
+
+.dayBarRow {
+  display: grid;
+  grid-template-columns: 80px 1fr 90px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dayLabel {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.dayTrack {
+  height: 12px;
+  background: var(--surface-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.dayFill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #D17A4E 0%, #B4690E 100%);
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dayValue {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: right;
+  color: var(--text);
+}
+
+/* ====== DATA TABLE ====== */
+.tableCard {
+  background: #ffffff;
+  border: 1px solid rgba(61, 28, 2, 0.08);
+  border-radius: var(--r-xl);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2rem;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.tableTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid rgba(61, 28, 2, 0.07);
+  border-radius: var(--r-lg);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.88rem;
+}
+
+.table th {
+  background: var(--surface-2);
+  padding: 0.85rem 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 1.5px solid rgba(61, 28, 2, 0.08);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table td {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid rgba(61, 28, 2, 0.05);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tr:hover td {
+  background: rgba(237, 166, 10, 0.04);
+}
+
+/* ====== LOADING SPINNER ====== */
+.chartLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  height: 250px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgba(61, 28, 2, 0.08);
+  border-top-color: var(--primary);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.errorMsg {
+  background: rgba(217, 76, 61, 0.1);
+  border: 1px solid rgba(217, 76, 61, 0.2);
+  color: var(--danger);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--r-lg);
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+}

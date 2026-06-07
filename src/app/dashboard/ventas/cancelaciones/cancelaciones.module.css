@@ -1,0 +1,233 @@
+.container {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: fadeIn 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 2px solid rgba(61, 28, 2, 0.08);
+  padding-bottom: 1rem;
+}
+
+.titleArea h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-chocolate, #3D1C02);
+  margin-bottom: 0.25rem;
+}
+
+.titleArea p {
+  color: rgba(61, 28, 2, 0.6);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.actionsArea {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.presets {
+  display: flex;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(61, 28, 2, 0.08);
+}
+
+.presetBtn {
+  border: none;
+  background: none;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(61, 28, 2, 0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+  border-right: 1px solid rgba(61, 28, 2, 0.08);
+}
+
+.presetBtn:last-child {
+  border-right: none;
+}
+
+.presetBtn:hover {
+  background: rgba(61, 28, 2, 0.03);
+  color: var(--color-chocolate, #3D1C02);
+}
+
+.presetActive {
+  background: var(--color-amber, #E3A21C);
+  color: white !important;
+}
+
+.presetActive:hover {
+  background: var(--color-amber, #E3A21C);
+}
+
+.dateFilter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(61, 28, 2, 0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dateFilter input {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-chocolate, #3D1C02);
+  outline: none;
+}
+
+.dateFilter span {
+  color: rgba(61, 28, 2, 0.4);
+  font-weight: 600;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.kpiCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(61, 28, 2, 0.05);
+}
+
+.kpiIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpiInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpiLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(61, 28, 2, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpiValue {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--color-chocolate, #3D1C02);
+  line-height: 1.2;
+}
+
+.tableCard {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(61, 28, 2, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-chocolate, #3D1C02);
+}
+
+.searchBar input {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(61, 28, 2, 0.1);
+  font-family: inherit;
+  font-size: 0.9rem;
+  width: 250px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.searchBar input:focus {
+  border-color: var(--color-amber, #E3A21C);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(61, 28, 2, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid rgba(61, 28, 2, 0.08);
+}
+
+.table td {
+  padding: 1rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(61, 28, 2, 0.04);
+  color: var(--color-chocolate, #3D1C02);
+}
+
+.table tbody tr:hover {
+  background: rgba(61, 28, 2, 0.01);
+}
+
+.emptyState {
+  padding: 3rem;
+  text-align: center;
+  color: rgba(61, 28, 2, 0.5);
+  font-weight: 600;
+  background: rgba(61, 28, 2, 0.02);
+  border-radius: 8px;
+}

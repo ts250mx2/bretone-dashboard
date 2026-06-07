@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* ============================================
+   La Petite Bretonne — Professional Palette
+   A warm, appetizing scheme for a premium crêperie:
+   Espresso #3D1C02 · Warm Gold #EDA60A · Teal #0E9488
+   Caramel #B4690E · Brand Red #D6402C · Cream #FAF6EF
+   ============================================ */
+:root {
+  /* Bretone Brand Colors as HSL tokens */
+  --bretone-espresso: 33 94% 12%;     /* #3D1C02 */
+  --bretone-gold: 40 78% 50%;         /* #E3A21C */
+  --bretone-teal: 175 77% 35%;        /* #149D92 */
+  --bretone-terracotta: 20 59% 56%;   /* #D17A4E */
+  --bretone-red: 6 67% 55%;           /* #D94C3D */
+  --bretone-cream: 39 46% 96%;        /* #FAF6EF */
+
+  /* Mapped accent variables used throughout the dashboard */
+  --pink: #3D1C02;                    /* espresso — primary dark / line charts */
+  --pink-deep: #5A2E0C;
+  --pink-glow: rgba(61, 28, 2, 0.12);
+  --cyan: #149D92;                    /* teal — secondary data accent */
+  --cyan-deep: #0F7F76;
+  --yellow-deep: #D17A4E;             /* terracotta — tertiary accent */
+  --danger: #D94C3D;
+  --surface: #ffffff;
+  --surface-2: #F5EEE2;               /* warm cream surface */
+  --text: #3D1C02;
+  --text-muted: rgba(61, 28, 2, 0.58);
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --ease: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-sm: 0 1px 3px rgba(61, 28, 2, 0.05);
+  --shadow-lg: 0 8px 24px rgba(61, 28, 2, 0.08);
+
+  /* Semantic tokens mapped to bretone palette */
+  --background: 39 46% 96%;           /* Warm cream background */
+  --foreground: 33 94% 12%;           /* Espresso text */
+
+  --card: 0 0% 100%;
+  --card-foreground: 33 94% 12%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 33 94% 12%;
+
+  --primary: 40 78% 50%;              /* Honey gold */
+  --primary-foreground: 33 94% 12%;   /* Espresso on gold */
+
+  --secondary: 6 67% 55%;             /* Coral red */
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 38 38% 91%;
+  --muted-foreground: 33 24% 42%;
+
+  --accent: 42 72% 90%;               /* Soft honey tint */
+  --accent-foreground: 33 94% 12%;
+
+  --destructive: 6 67% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 37 33% 87%;               /* Warm taupe */
+  --input: 37 33% 87%;
+  --ring: 40 78% 50%;
+
+  --radius: 0.75rem;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  overflow-x: hidden;
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+/* ============================================
+   Premium Scrollbars — Bretone Style
+   ============================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(61, 28, 2, 0.18);
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(237, 166, 10, 0.55);
+}
+
+/* ============================================
+   Bretone Panel Card
+   ============================================ */
+.bretone-panel {
+  background: #ffffff;
+  border: 1px solid rgba(61, 28, 2, 0.07);
+  box-shadow: 0 1px 3px 0 rgba(61, 28, 2, 0.06),
+              0 1px 2px -1px rgba(61, 28, 2, 0.04);
+  border-radius: 14px;
+}
+
+.bretone-panel-warm {
+  background: linear-gradient(135deg, #fffdf8 0%, #faf6ef 100%);
+  border: 1px solid rgba(237, 166, 10, 0.18);
+  box-shadow: 0 2px 8px 0 rgba(61, 28, 2, 0.06);
+  border-radius: 14px;
+}
+
+/* ============================================
+   Hover Animation
+   ============================================ */
+.hover-bretone {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-bretone:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -6px rgba(61, 28, 2, 0.12),
+              0 0 0 1px rgba(237, 166, 10, 0.2);
+  border-color: rgba(237, 166, 10, 0.35) !important;
+}
+
+/* ============================================
+   Sidebar active state glow
+   ============================================ */
+.sidebar-active {
+  background: rgba(227, 162, 28, 0.18);
+  color: #3D1C02;
+}
+
+/* ============================================
+   KPI Card gradient overlays
+   ============================================ */
+.kpi-glow-yellow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(237, 166, 10, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+.kpi-glow-red::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(214, 64, 44, 0.07) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+.kpi-glow-brown::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(61, 28, 2, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+.kpi-glow-green::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(34, 197, 94, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: inherit;
+}

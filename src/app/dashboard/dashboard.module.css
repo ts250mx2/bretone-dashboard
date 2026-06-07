@@ -1,0 +1,771 @@
+/* ─── Container ─────────────────────────────────────────────────────────── */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.titleGroup h1 {
+  font-size: 1.625rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+/* ─── Filter row (single line: presets + date pickers) ───────────────────── */
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.dateDivider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin: 0 0.25rem;
+  flex-shrink: 0;
+}
+
+.periodBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  transition: var(--ease);
+  cursor: pointer;
+}
+
+.periodBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.periodActive {
+  background: linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px var(--pink-glow);
+}
+
+/* ─── Error ──────────────────────────────────────────────────────────────── */
+.errorMsg {
+  background: rgba(245,101,101,0.1);
+  border: 1px solid rgba(245,101,101,0.3);
+  color: var(--danger);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--r-lg);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+/* ─── KPI Grid ───────────────────────────────────────────────────────────── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .kpiGrid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .kpiGrid { grid-template-columns: 1fr; }
+}
+
+.kpiCard {
+  padding: 1.5rem;
+  border-radius: var(--r-xl);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  transition: var(--ease);
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.kpiMain {
+  border: 1.5px solid var(--pink-glow);
+}
+
+.kpiIcon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kpiLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.kpiValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.kpiSub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+/* ─── Payment mini-cards ─────────────────────────────────────────────────── */
+.payGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+@media (max-width: 600px) {
+  .payGrid { grid-template-columns: 1fr; }
+}
+
+.payCard {
+  padding: 1rem 1.25rem;
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.payLabel {
+  flex: 1;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.payVal {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* ─── Chart Cards ────────────────────────────────────────────────────────── */
+.chartCard {
+  border-radius: var(--r-xl);
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.chartHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.chartTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.chartSub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.chartBody {
+  overflow-x: auto;
+}
+
+.chartEmpty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2.5rem;
+  font-size: 0.9rem;
+}
+
+/* ─── SVG Line Chart ─────────────────────────────────────────────────────── */
+.svg {
+  width: 100%;
+  height: 200px;
+  display: block;
+  overflow: visible;
+}
+
+.svg circle {
+  transition: r 0.15s ease, fill 0.15s ease;
+  cursor: pointer;
+}
+
+.svg circle:hover {
+  r: 6px;
+  fill: var(--pink-deep) !important;
+}
+
+/* ─── Group Buttons (Breakdown) ──────────────────────────────────────────── */
+.groupBtns {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.groupBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--ease);
+}
+
+.groupBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.groupActive {
+  background: var(--pink) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 3px 10px var(--pink-glow);
+}
+
+/* ─── Horizontal Bar Chart ───────────────────────────────────────────────── */
+.barList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 140px 1fr 100px 80px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .barRow { grid-template-columns: 100px 1fr 80px; }
+  .barCount { display: none; }
+}
+
+.barLabel {
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+
+.barTrack {
+  height: 12px;
+  background: var(--surface-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.barValue {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.barCount {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ─── Heatmap ────────────────────────────────────────────────────────────── */
+.heatmapWrap {
+  overflow-x: auto;
+}
+
+.heatmapGrid {
+  display: grid;
+  grid-template-columns: 40px repeat(24, 1fr);
+  gap: 3px;
+  min-width: 700px;
+}
+
+.heatCorner {
+  /* empty top-left cell */
+}
+
+.heatHour {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: 2px;
+  font-weight: 600;
+}
+
+.heatDay {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 4px;
+}
+
+.heatCell {
+  height: 26px;
+  border-radius: 4px;
+  transition: background 0.3s ease, transform 0.15s ease;
+  cursor: default;
+}
+
+.heatCell:hover {
+  transform: scale(1.15);
+  z-index: 2;
+  position: relative;
+}
+
+.heatLegend {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.heatLegendBar {
+  flex: 1;
+  max-width: 160px;
+  height: 10px;
+  border-radius: 99px;
+  background: linear-gradient(to right, rgba(255,109,130,0.12), rgba(255,109,130,1));
+}
+
+/* ─── Date Range ─────────────────────────────────────────────────────────── */
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.dateRangeLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dateInput {
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--r-lg);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+  width: auto;
+  min-width: 130px;
+  transition: var(--ease);
+  cursor: pointer;
+}
+
+.dateInput:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--pink-glow);
+  outline: none;
+}
+
+.dateSep {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.dateClear {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(245,101,101,0.12);
+  color: var(--danger);
+  border: none;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--ease);
+  flex-shrink: 0;
+}
+
+.dateClear:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* ─── Clickable Category rows ─── */
+.clickableRow {
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0.35rem 0.5rem;
+  margin: 0 -0.5rem;
+  border-radius: var(--r-md);
+}
+
+.clickableRow:hover {
+  background: var(--surface-2);
+  transform: translateX(4px);
+}
+
+/* ─── Premium Modal ──────────────────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 12, 0.65);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modalContent {
+  width: 90%;
+  max-width: 550px;
+  border-radius: var(--r-xl);
+  padding: 2rem;
+  position: relative;
+  animation: scaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modalHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.modalTitleGroup h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+
+.modalTitleGroup p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.modalCloseBtn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--ease);
+}
+
+.modalCloseBtn:hover {
+  background: rgba(245, 101, 101, 0.12);
+  color: var(--danger);
+  border-color: rgba(245, 101, 101, 0.2);
+  transform: rotate(90deg);
+}
+
+/* Modal KPIs */
+.modalKpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modalKpiCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.85rem 1rem;
+  border-radius: var(--r-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.modalKpiLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.modalKpiValue {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* Tabs */
+.modalTabs {
+  display: flex;
+  background: var(--surface);
+  padding: 0.25rem;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  gap: 0.25rem;
+}
+
+.modalTabBtn {
+  flex: 1;
+  padding: 0.45rem;
+  border-radius: var(--r-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.modalTabActivePink {
+  background: var(--pink);
+  color: #fff !important;
+  box-shadow: 0 4px 10px var(--pink-glow);
+}
+
+.modalTabActiveCyan {
+  background: var(--cyan);
+  color: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(14, 148, 136, 0.3);
+}
+
+/* Modal Charts List */
+.modalChartBody {
+  max-height: 250px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-right: 0.25rem;
+}
+
+/* Custom Scrollbar for Modal Charts */
+.modalChartBody::-webkit-scrollbar {
+  width: 4px;
+}
+.modalChartBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modalChartBody::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
+}
+
+.modalBarRow {
+  display: grid;
+  grid-template-columns: 28px 1fr 85px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modalBarRank {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+}
+
+.modalBarContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.modalBarLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modalBarTrack {
+  height: 8px;
+  background: var(--surface-2);
+  border-radius: 99px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.modalBarFillPink {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pink) 0%, var(--pink-deep) 100%);
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modalBarFillCyan {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan) 0%, var(--cyan-deep) 100%);
+  border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modalBarValue {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: right;
+  color: var(--text);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ─── Loading States ─────────────────────────────────────────────────────── */
+.skeleton {
+  display: inline-block;
+  border-radius: 6px;
+  background: linear-gradient(
+    100deg,
+    rgba(61, 28, 2, 0.06) 30%,
+    rgba(61, 28, 2, 0.13) 50%,
+    rgba(61, 28, 2, 0.06) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.3s ease-in-out infinite;
+}
+
+.skeletonValue {
+  height: 1.35rem;
+  width: 96px;
+  vertical-align: middle;
+}
+
+.skeletonSm {
+  height: 1rem;
+  width: 70px;
+  vertical-align: middle;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.chartLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  min-height: 200px;
+  padding: 2rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid rgba(61, 28, 2, 0.1);
+  border-top-color: #E3A21C;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
