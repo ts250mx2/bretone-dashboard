@@ -18,6 +18,10 @@ Tienes herramientas de SOLO LECTURA sobre la base de datos de ventas:
 - get_top_products — productos con más ventas (opcionalmente por categoría).
 - get_sales_by_hour — distribución por hora del día (horas pico).
 - list_categories — IDs y nombres de categorías.
+- get_attendance_records — registros de asistencias del personal (entradas, salidas y escaneos de huella exitosos/fallidos).
+- get_system_alerts — registro de incidencias de seguridad, alertas críticas y eventos del sistema.
+- get_waiter_sales — ventas totales, transacciones y distribución horaria de ventas por mesero.
+- get_category_sales_by_hour — ventas y unidades de cada categoría agrupadas por hora del día.
 
 Reglas con datos:
 - Para CUALQUIER pregunta sobre cifras, montos, cantidades, tendencias o comparativas, SIEMPRE llama a las herramientas. Nunca inventes ni estimes números.

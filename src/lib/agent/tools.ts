@@ -107,6 +107,52 @@ export const tools: Anthropic.Tool[] = [
       'Lista todas las categorías de producto disponibles con su ID y nombre. Úsalo cuando necesites el ID de una categoría para filtrar productos.',
     input_schema: { type: 'object', properties: {} },
   },
+  {
+    name: 'get_attendance_records',
+    description:
+      'Registros de asistencias/chequeos de personal (entradas, salidas y escaneos de huella exitosos o fallidos) para un rango de fechas. Úsalo para saber quién asistió o si hubo fallas en el lector biométrico.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        ...DATE_PROPS,
+        limit: { type: 'integer', description: 'Número máximo de registros a devolver (1-200). Por defecto 50.' },
+      },
+      required: ['dateFrom', 'dateTo'],
+    },
+  },
+  {
+    name: 'get_system_alerts',
+    description:
+      'Historial de incidencias, alertas críticas (por ejemplo, cambios de precios, cancelaciones o errores) y eventos de seguridad registrados para un rango de fechas. Úsalo para responder sobre incidentes o eventos de seguridad.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        ...DATE_PROPS,
+        limit: { type: 'integer', description: 'Número máximo de alertas a devolver (1-200). Por defecto 50.' },
+      },
+      required: ['dateFrom', 'dateTo'],
+    },
+  },
+  {
+    name: 'get_waiter_sales',
+    description:
+      'Ventas totales, transacciones y distribución horaria por mesero (según IdUsuarioMesa) para un rango de fechas. Úsalo para responder "cuánto vendió cada mesero", rendimientos de meseros o sus horarios de venta.',
+    input_schema: {
+      type: 'object',
+      properties: { ...DATE_PROPS },
+      required: ['dateFrom', 'dateTo'],
+    },
+  },
+  {
+    name: 'get_category_sales_by_hour',
+    description:
+      'Ventas totales y unidades vendidas de cada categoría agrupadas por hora del día para un rango de fechas. Úsalo para analizar qué categorías se venden más en qué horarios (por ejemplo, crepas en la tarde vs bebidas en la mañana).',
+    input_schema: {
+      type: 'object',
+      properties: { ...DATE_PROPS },
+      required: ['dateFrom', 'dateTo'],
+    },
+  },
 ];
 
 type ToolInput = Record<string, unknown>;
@@ -224,6 +270,105 @@ async function listCategories() {
   return { categorias: rows };
 }
 
+async function getAttendanceRecords(input: ToolInput) {
+  const dateFrom = safeDate(input.dateFrom, todayISO());
+  const dateTo = safeDate(input.dateTo, dateFrom);
+  const limit = clampInt(input.limit, 50, 1, 200);
+  const rows = await query(
+    `SELECT 
+       a.IdAsistencia AS id, 
+       a.IdUsuario AS idUsuario, 
+       COALESCE(u.Usuario, 'Desconocido') AS usuario, 
+       a.FechaAsistencia AS fecha, 
+       a.ExitoHuella AS exitoHuella
+     FROM tblAsistencias a
+     LEFT JOIN tblUsuarios u ON a.IdUsuario = u.IdUsuario
+     WHERE DATE(a.FechaAsistencia) BETWEEN ? AND ?
+     ORDER BY a.FechaAsistencia DESC
+     LIMIT ${limit}`,
+    [dateFrom, dateTo]
+  );
+  return { dateFrom, dateTo, registros: rows };
+}
+
+async function getSystemAlerts(input: ToolInput) {
+  const dateFrom = safeDate(input.dateFrom, todayISO());
+  const dateTo = safeDate(input.dateTo, dateFrom);
+  const limit = clampInt(input.limit, 50, 1, 200);
+  const rows = await query(
+    `SELECT 
+       al.IdAlerta AS id, 
+       al.Alerta AS alerta, 
+       al.IdUsuario AS idUsuario, 
+       COALESCE(u.Usuario, 'Sistema/Otro') AS usuario, 
+       al.IdApertura AS idApertura, 
+       al.FechaAlerta AS fecha, 
+       al.Rojo AS critico
+     FROM tblAlertas al
+     LEFT JOIN tblUsuarios u ON al.IdUsuario = u.IdUsuario
+     WHERE DATE(al.FechaAlerta) BETWEEN ? AND ?
+     ORDER BY al.FechaAlerta DESC
+     LIMIT ${limit}`,
+    [dateFrom, dateTo]
+  );
+  return { dateFrom, dateTo, alertas: rows };
+}
+
+async function getWaiterSales(input: ToolInput) {
+  const dateFrom = safeDate(input.dateFrom, todayISO());
+  const dateTo = safeDate(input.dateTo, dateFrom);
+  const rows = await query(
+    `SELECT 
+       COALESCE(NULLIF(TRIM(u.Usuario), ''), 'Sin Mesero') AS mesero, 
+       SUM(d.Precio * d.Cantidad) AS total,
+       COUNT(DISTINCT v.IdVenta) AS transacciones
+     FROM tblDetalleVentas d
+     INNER JOIN tblVentas v ON d.IdVenta = v.IdVenta AND d.IdApertura = v.IdApertura
+     LEFT JOIN tblUsuarios u ON v.IdUsuarioMesa = u.IdUsuario
+     WHERE v.Cancelada = 0 AND DATE(v.FechaVenta) BETWEEN ? AND ?
+     GROUP BY COALESCE(NULLIF(TRIM(u.Usuario), ''), 'Sin Mesero')
+     ORDER BY total DESC`,
+    [dateFrom, dateTo]
+  );
+  
+  const hourlyRows = await query(
+    `SELECT 
+       COALESCE(NULLIF(TRIM(u.Usuario), ''), 'Sin Mesero') AS mesero, 
+       HOUR(v.FechaVenta) AS hora,
+       SUM(d.Precio * d.Cantidad) AS total
+     FROM tblDetalleVentas d
+     INNER JOIN tblVentas v ON d.IdVenta = v.IdVenta AND d.IdApertura = v.IdApertura
+     LEFT JOIN tblUsuarios u ON v.IdUsuarioMesa = u.IdUsuario
+     WHERE v.Cancelada = 0 AND DATE(v.FechaVenta) BETWEEN ? AND ?
+     GROUP BY COALESCE(NULLIF(TRIM(u.Usuario), ''), 'Sin Mesero'), HOUR(v.FechaVenta)
+     ORDER BY mesero, hora`,
+    [dateFrom, dateTo]
+  );
+  
+  return { dateFrom, dateTo, ventasPorMesero: rows, distribucionHoraria: hourlyRows };
+}
+
+async function getCategorySalesByHour(input: ToolInput) {
+  const dateFrom = safeDate(input.dateFrom, todayISO());
+  const dateTo = safeDate(input.dateTo, dateFrom);
+  const rows = await query(
+    `SELECT 
+       c.Categoria AS categoria,
+       HOUR(v.FechaVenta) AS hora,
+       SUM(d.Precio * d.Cantidad) AS total,
+       SUM(d.Cantidad) AS unidades
+     FROM tblDetalleVentas d
+     INNER JOIN tblProductos p ON d.IdProducto = p.IdProducto
+     INNER JOIN tblCategorias c ON p.IdCategoria = c.IdCategoria
+     INNER JOIN tblVentas v ON d.IdVenta = v.IdVenta AND d.IdApertura = v.IdApertura
+     WHERE v.Cancelada = 0 AND DATE(v.FechaVenta) BETWEEN ? AND ?
+     GROUP BY c.Categoria, HOUR(v.FechaVenta)
+     ORDER BY categoria, hora`,
+    [dateFrom, dateTo]
+  );
+  return { dateFrom, dateTo, ventasCategoriaPorHora: rows };
+}
+
 const HANDLERS: Record<string, (input: ToolInput) => Promise<unknown>> = {
   get_sales_summary: getSalesSummary,
   get_sales_trend: getSalesTrend,
@@ -231,6 +376,10 @@ const HANDLERS: Record<string, (input: ToolInput) => Promise<unknown>> = {
   get_top_products: getTopProducts,
   get_sales_by_hour: getSalesByHour,
   list_categories: listCategories,
+  get_attendance_records: getAttendanceRecords,
+  get_system_alerts: getSystemAlerts,
+  get_waiter_sales: getWaiterSales,
+  get_category_sales_by_hour: getCategorySalesByHour,
 };
 
 /** Execute a tool by name and return its result serialized as JSON for the model. */
