@@ -18,6 +18,7 @@ import {
     Users,
     Bot,
     XCircle,
+    Clock,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -40,6 +41,9 @@ const sidebarItems: SidebarItem[] = [
             { name: 'Tendencias de Venta', href: '/dashboard/ventas/tendencias', icon: TrendingUp },
             { name: 'Mapa de Calor', href: '/dashboard/ventas/mapadecalor', icon: Flame },
             { name: 'Categorías Global', href: '/dashboard/ventas/categorias-global', icon: LayoutGrid },
+            { name: 'Categorías por Hora', href: '/dashboard/ventas/categoria-hora', icon: Clock },
+            { name: 'Categorías por Hora Real', href: '/dashboard/ventas/categoria-hora-real', icon: Clock },
+            { name: 'Comparación de Horas', href: '/dashboard/ventas/comparativa-horas', icon: Clock },
             { name: 'Tipo de Venta', href: '/dashboard/ventas/tipo', icon: UtensilsCrossed },
             { name: 'Operaciones', href: '/dashboard/ventas/operaciones', icon: ClipboardList },
             { name: 'Reporte Ventas', href: '/dashboard/reportes/ventas', icon: FileText },
