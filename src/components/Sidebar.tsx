@@ -19,6 +19,7 @@ import {
     Bot,
     XCircle,
     Clock,
+    Bell,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -42,6 +43,7 @@ const sidebarItems: SidebarItem[] = [
             { name: 'Mapa de Calor', href: '/dashboard/ventas/mapadecalor', icon: Flame },
             { name: 'Categorías Global', href: '/dashboard/ventas/categorias-global', icon: LayoutGrid },
             { name: 'Categorías por Hora', href: '/dashboard/ventas/categoria-hora', icon: Clock },
+            { name: 'Ventas por Mesero', href: '/dashboard/ventas/meseros', icon: Users },
             { name: 'Categorías por Hora Real', href: '/dashboard/ventas/categoria-hora-real', icon: Clock },
             { name: 'Comparación de Horas', href: '/dashboard/ventas/comparativa-horas', icon: Clock },
             { name: 'Tipo de Venta', href: '/dashboard/ventas/tipo', icon: UtensilsCrossed },
@@ -52,6 +54,14 @@ const sidebarItems: SidebarItem[] = [
             { name: 'Cancelaciones', href: '/dashboard/ventas/cancelaciones', icon: XCircle },
         ]
     },
+    {
+        name: 'Otros Reportes',
+        icon: FileText,
+        subItems: [
+            { name: 'Alertas', href: '/dashboard/reportes/alertas', icon: Bell },
+            { name: 'Asistencias', href: '/dashboard/reportes/asistencias', icon: ClipboardList },
+        ]
+    }
 ];
 
 interface SidebarProps {
@@ -64,7 +74,8 @@ interface SidebarProps {
 export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }: SidebarProps) {
     const pathname = usePathname();
     const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
-        'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes'),
+        'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes/ventas'),
+        'Otros Reportes': pathname.includes('/reportes/alertas') || pathname.includes('/reportes/asistencias'),
     });
 
     const toggleExpanded = (name: string) => {
@@ -77,7 +88,8 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
             setExpandedMenus({});
         } else {
             setExpandedMenus({
-                'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes'),
+                'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes/ventas'),
+                'Otros Reportes': pathname.includes('/reportes/alertas') || pathname.includes('/reportes/asistencias'),
             });
         }
     }, [isCollapsed, pathname]);
