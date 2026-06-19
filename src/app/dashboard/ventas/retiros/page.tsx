@@ -43,12 +43,34 @@ export default function RetirosPage() {
   const [kpis, setKpis] = useState({ totalEfectivo: 0, transacciones: 0, promedio: 0, maxRetiro: 0 });
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFrom = localStorage.getItem('bretone_date_from');
+      const savedTo = localStorage.getItem('bretone_date_to');
+      if (savedFrom && savedTo) {
+        setDateFrom(savedFrom);
+        setDateTo(savedTo);
+      }
+    }
+    setMounted(true);
+  }, []);
+
+  // Persist dates to localStorage when they change
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('bretone_date_from', dateFrom);
+      localStorage.setItem('bretone_date_to', dateTo);
+    }
+  }, [dateFrom, dateTo, mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
     if (dateFrom && dateTo) {
       fetchData();
     }
-  }, [dateFrom, dateTo]);
+  }, [dateFrom, dateTo, mounted]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -151,6 +173,10 @@ export default function RetirosPage() {
       pointsData: ptsData 
     };
   }, [retiros]);
+
+  if (!mounted) {
+    return <div className={styles.emptyState}>Cargando retiros...</div>;
+  }
 
   return (
     <div className={styles.container}>

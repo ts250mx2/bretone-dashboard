@@ -45,6 +45,7 @@ export default function CancelacionesPage() {
   const [cancelaciones, setCancelaciones] = useState<any[]>([]);
   const [kpis, setKpis] = useState<any>({ totalMonto: 0, totalTransacciones: 0, topMotivos: [] });
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   // Modal
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
@@ -52,6 +53,27 @@ export default function CancelacionesPage() {
   const [ticketLoading, setTicketLoading] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFrom = localStorage.getItem('bretone_date_from');
+      const savedTo = localStorage.getItem('bretone_date_to');
+      if (savedFrom && savedTo) {
+        setDateFrom(savedFrom);
+        setDateTo(savedTo);
+      }
+    }
+    setMounted(true);
+  }, []);
+
+  // Persist dates to localStorage when they change
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('bretone_date_from', dateFrom);
+      localStorage.setItem('bretone_date_to', dateTo);
+    }
+  }, [dateFrom, dateTo, mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
     async function fetchData() {
       if (!dateFrom || !dateTo) return;
       setLoading(true);
@@ -70,7 +92,7 @@ export default function CancelacionesPage() {
       }
     }
     fetchData();
-  }, [dateFrom, dateTo]);
+  }, [dateFrom, dateTo, mounted]);
 
   const handlePeriod = (p: Period) => {
     const [from, to] = datesForPeriod(p);
@@ -110,6 +132,10 @@ export default function CancelacionesPage() {
       (c.Cliente || '').toLowerCase().includes(q)
     );
   }, [searchQuery, cancelaciones]);
+
+  if (!mounted) {
+    return <div className={styles.emptyState}>Cargando cancelaciones...</div>;
+  }
 
   return (
     <div className={styles.container}>
