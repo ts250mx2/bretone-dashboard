@@ -60,6 +60,7 @@ const sidebarItems: SidebarItem[] = [
         subItems: [
             { name: 'Alertas', href: '/dashboard/reportes/alertas', icon: Bell },
             { name: 'Asistencias', href: '/dashboard/reportes/asistencias', icon: ClipboardList },
+            { name: 'Consumos', href: '/dashboard/reportes/consumos', icon: ShoppingBag },
         ]
     }
 ];
@@ -75,7 +76,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
     const pathname = usePathname();
     const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
         'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes/ventas'),
-        'Otros Reportes': pathname.includes('/reportes/alertas') || pathname.includes('/reportes/asistencias'),
+        'Otros Reportes': pathname.includes('/reportes/alertas') || pathname.includes('/reportes/asistencias') || pathname.includes('/reportes/consumos'),
     });
 
     const toggleExpanded = (name: string) => {
@@ -89,7 +90,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
         } else {
             setExpandedMenus({
                 'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes/ventas'),
-                'Otros Reportes': pathname.includes('/reportes/alertas') || pathname.includes('/reportes/asistencias'),
+                'Otros Reportes': pathname.includes('/reportes/alertas') || pathname.includes('/reportes/asistencias') || pathname.includes('/reportes/consumos'),
             });
         }
     }, [isCollapsed, pathname]);
