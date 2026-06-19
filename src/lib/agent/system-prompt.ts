@@ -1,7 +1,10 @@
 /** Builds the system prompt for the La Petite Bretonne sales agent. */
 export function buildSystemPrompt(): string {
   const now = new Date();
-  const today = now.toISOString().slice(0, 10);
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const today = `${year}-${month}-${day}`;
   const weekday = now.toLocaleDateString('es-MX', { weekday: 'long' });
 
   return `Eres "Brioche", el asistente de inteligencia de negocio de **La Petite Bretonne**, una crepería.
