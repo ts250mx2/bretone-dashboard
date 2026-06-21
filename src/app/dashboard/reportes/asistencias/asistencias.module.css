@@ -449,3 +449,55 @@
   font-size: 0.9rem;
   font-weight: 500;
 }
+
+/* ====== RESPONSIVE (tablet / mobile) ====== */
+@media (max-width: 900px) {
+  .filterCard {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .presets {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.35rem;
+  }
+  .presetBtn {
+    justify-content: center;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.76rem;
+  }
+  .dateRangePicker {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0.5rem;
+  }
+  .dateInput { width: 100%; text-align: center; }
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .titleGroup { gap: 0.65rem; }
+  .titleGroup svg { width: 26px; height: 26px; }
+  .titleGroup h1 { font-size: 1.3rem; }
+  .subtitle { font-size: 0.8rem; }
+  .actionsGroup { width: 100%; }
+  .exportBtn { width: 100%; justify-content: center; padding: 0.7rem; }
+  .tableCard { padding: 1.1rem; }
+  .tableHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .tableActions { width: 100%; }
+  .tableSearchWrapper { width: 100%; min-width: unset; }
+  .table th, .table td { padding: 0.7rem 0.75rem; }
+}

@@ -84,14 +84,14 @@ export default function DashboardLayout({
         <div className="min-h-screen flex flex-col relative overflow-hidden" style={{ background: '#FAF6EF' }}>
             {/* ====== HEADER ====== */}
             <header
-                className="h-16 fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 select-none"
+                className="h-16 fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-3 sm:px-6 select-none"
                 style={{
                     background: '#ffffff',
                     borderBottom: '1px solid rgba(61, 28, 2, 0.08)',
                     boxShadow: '0 1px 12px rgba(61, 28, 2, 0.06)',
                 }}
             >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                     {/* Mobile Hamburger */}
                     <button
                         className="lg:hidden p-2 rounded-xl transition-all duration-200 cursor-pointer"
@@ -117,7 +117,7 @@ export default function DashboardLayout({
                     <div className="w-px h-6 hidden md:block mx-2" style={{ background: 'rgba(61, 28, 2, 0.15)' }} />
 
                     {/* Breadcrumbs */}
-                    <div className="text-xs font-semibold flex items-center gap-2" style={{ color: 'rgba(61, 28, 2, 0.55)' }}>
+                    <div className="text-xs font-semibold hidden md:flex items-center gap-2 min-w-0" style={{ color: 'rgba(61, 28, 2, 0.55)' }}>
                         <span>Plataforma</span>
                         {paths.map((path, idx) => {
                             if (path === 'dashboard' && paths.length > 1) return null;
@@ -137,7 +137,7 @@ export default function DashboardLayout({
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                     {/* Live Search */}
                     <div className="relative">
                         <div

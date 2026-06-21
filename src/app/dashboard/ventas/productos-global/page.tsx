@@ -216,8 +216,24 @@ export default function GlobalProductsReport() {
   }, [isTrendModalOpen, selectedProd, trendDateFrom, trendDateTo, trendGroup, fetchProductTrend]);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFrom = localStorage.getItem('bretone_date_from');
+      const savedTo = localStorage.getItem('bretone_date_to');
+      if (savedFrom && savedTo) {
+        setDateFrom(savedFrom);
+        setDateTo(savedTo);
+      }
+    }
     setMounted(true);
   }, []);
+
+  // Persist the selected period to shared localStorage
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('bretone_date_from', dateFrom);
+      localStorage.setItem('bretone_date_to', dateTo);
+    }
+  }, [dateFrom, dateTo, mounted]);
 
   // Fetch global products list
   const fetchProducts = useCallback(async (from: string, to: string) => {
@@ -249,8 +265,8 @@ export default function GlobalProductsReport() {
   }, []);
 
   useEffect(() => {
-    fetchProducts(dateFrom, dateTo);
-  }, [dateFrom, dateTo, fetchProducts]);
+    if (mounted) fetchProducts(dateFrom, dateTo);
+  }, [dateFrom, dateTo, mounted, fetchProducts]);
 
   // Fetch product breakdown hourly and recent tickets
   const fetchProductDetails = useCallback(async (prodId: number) => {

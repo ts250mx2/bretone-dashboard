@@ -65,8 +65,24 @@ export default function SalesHeatmapReport() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFrom = localStorage.getItem('bretone_date_from');
+      const savedTo = localStorage.getItem('bretone_date_to');
+      if (savedFrom && savedTo) {
+        setDateFrom(savedFrom);
+        setDateTo(savedTo);
+      }
+    }
     setMounted(true);
   }, []);
+
+  // Persist the selected period to shared localStorage
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('bretone_date_from', dateFrom);
+      localStorage.setItem('bretone_date_to', dateTo);
+    }
+  }, [dateFrom, dateTo, mounted]);
 
   // Fetch heatmap data
   const fetchData = useCallback(async (from: string, to: string) => {
@@ -92,8 +108,8 @@ export default function SalesHeatmapReport() {
   }, []);
 
   useEffect(() => {
-    fetchData(dateFrom, dateTo);
-  }, [dateFrom, dateTo, fetchData]);
+    if (mounted) fetchData(dateFrom, dateTo);
+  }, [dateFrom, dateTo, mounted, fetchData]);
 
   const handlePeriod = (p: Period) => {
     const [from, to] = datesForPeriod(p);

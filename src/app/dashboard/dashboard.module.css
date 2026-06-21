@@ -769,3 +769,58 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ─── Responsive (tablet / mobile) ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .titleGroup h1 { font-size: 1.35rem; }
+  .filterRow {
+    justify-content: flex-start;
+    gap: 0.4rem;
+  }
+  .chartCard { padding: 1.1rem; }
+  .chartHeader { margin-bottom: 1rem; }
+}
+
+@media (max-width: 600px) {
+  .titleGroup { gap: 0.65rem; }
+  .titleGroup svg { width: 26px; height: 26px; }
+  .titleGroup h1 { font-size: 1.2rem; }
+  .subtitle { font-size: 0.8rem; }
+
+  /* Presets become an even 2-column grid; date pickers go full width */
+  .filterRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  .periodBtn {
+    justify-content: center;
+    padding: 0.55rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  .dateDivider { display: none; }
+  .dateInput {
+    grid-column: span 1;
+    min-width: 0;
+    width: 100%;
+    text-align: center;
+  }
+  .dateSep { display: none; }
+
+  .kpiCard { padding: 1.15rem; gap: 1rem; }
+  .kpiValue { font-size: 1.3rem; }
+
+  .chartCard { padding: 1rem; }
+  .chartHeader .groupBtns { flex-wrap: wrap; }
+
+  .modalContent { padding: 1.25rem; width: 95%; gap: 1rem; }
+  .modalKpis { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  .modalKpiValue { font-size: 1.05rem; }
+  .modalTitleGroup h3 { font-size: 1.05rem; }
+}

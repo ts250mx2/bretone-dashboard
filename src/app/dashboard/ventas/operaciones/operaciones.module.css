@@ -624,3 +624,24 @@
   border-radius: 50%;
   background: #22c55e;
 }
+
+/* ====== RESPONSIVE (tablet / mobile) ====== */
+@media (max-width: 900px) {
+  .filterCard { flex-direction: column; align-items: stretch; gap: 1rem; padding: 1rem; }
+  .leftFilters { flex-direction: column; align-items: stretch; width: 100%; gap: 0.85rem; }
+  .rightFilters { width: 100%; }
+  .searchWrapper { min-width: 0; width: 100%; flex: 1; }
+  .presets { width: 100%; }
+  .presetBtn { flex: 1 1 auto; justify-content: center; padding: 0.5rem 0.4rem; font-size: 0.78rem; }
+  .dateInputWrapper { width: 100%; justify-content: center; }
+}
+@media (max-width: 600px) {
+  .header { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .titleGroup { gap: 0.65rem; }
+  .titleGroup svg { width: 26px; height: 26px; }
+  .titleGroup h1 { font-size: 1.3rem; }
+  .actionsGroup { width: 100%; }
+  .modalHeader { padding: 1rem 1.1rem; flex-wrap: wrap; gap: 0.5rem; }
+  .table th, .table td { padding: 0.6rem 0.7rem; }
+  .thermalReceipt { width: 100%; padding: 1rem; }
+}

@@ -173,8 +173,24 @@ export default function SalesTrendReport() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFrom = localStorage.getItem('bretone_date_from');
+      const savedTo = localStorage.getItem('bretone_date_to');
+      if (savedFrom && savedTo) {
+        setDateFrom(savedFrom);
+        setDateTo(savedTo);
+      }
+    }
     setMounted(true);
   }, []);
+
+  // Persist the selected period to shared localStorage
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('bretone_date_from', dateFrom);
+      localStorage.setItem('bretone_date_to', dateTo);
+    }
+  }, [dateFrom, dateTo, mounted]);
 
   // Fetch trend data
   const fetchData = useCallback(async (from: string, to: string, tg: 'dia' | 'semana' | 'mes') => {
@@ -200,8 +216,8 @@ export default function SalesTrendReport() {
   }, []);
 
   useEffect(() => {
-    fetchData(dateFrom, dateTo, trendGroup);
-  }, [dateFrom, dateTo, trendGroup, fetchData]);
+    if (mounted) fetchData(dateFrom, dateTo, trendGroup);
+  }, [dateFrom, dateTo, trendGroup, mounted, fetchData]);
 
   const handlePeriod = (p: Period) => {
     const [from, to] = datesForPeriod(p);

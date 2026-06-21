@@ -122,6 +122,84 @@ function CategoryLineChart({ data, group }: { data: any[]; group: 'dia' | 'seman
   );
 }
 
+// Treemap (rectangles) of category sales mix — slice & dice layout
+const TREEMAP_COLORS = ['#E3A21C', '#149D92', '#D17A4E', '#3D1C02', '#C2410C', '#7A8B4F', '#5B7A99', '#9C5B6B', '#B4690E', '#0F7F76'];
+
+function CategoryTreemap({
+  data,
+  selected,
+  onSelect,
+}: {
+  data: CategoryItem[];
+  selected: CategoryItem | null;
+  onSelect: (c: CategoryItem) => void;
+}) {
+  const items = [...data].filter(d => Number(d.total) > 0).sort((a, b) => Number(b.total) - Number(a.total));
+  const total = items.reduce((s, x) => s + Number(x.total), 0);
+
+  if (items.length === 0 || total === 0) {
+    return <div className={styles.chartEmpty}>Sin ventas mayores a $0 en este período</div>;
+  }
+
+  const W = 1000;
+  const H = 420;
+  let x = 0, y = 0, w = W, h = H, remaining = total;
+  const rects: { x: number; y: number; w: number; h: number; item: CategoryItem }[] = [];
+
+  for (const item of items) {
+    const ratio = Number(item.total) / remaining;
+    if (w >= h) {
+      const rw = w * ratio;
+      rects.push({ x, y, w: rw, h, item });
+      x += rw; w -= rw;
+    } else {
+      const rh = h * ratio;
+      rects.push({ x, y, w, h: rh, item });
+      y += rh; h -= rh;
+    }
+    remaining -= Number(item.total);
+  }
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={styles.treemapSvg}>
+      {rects.map((r, i) => {
+        const isActive = selected?.nombre === r.item.nombre && selected?.id === r.item.id;
+        const share = (Number(r.item.total) / total) * 100;
+        const showLabel = r.w > 70 && r.h > 40;
+        const maxChars = Math.max(3, Math.floor(r.w / 9));
+        const label = r.item.nombre.length > maxChars ? r.item.nombre.slice(0, maxChars) + '…' : r.item.nombre;
+        return (
+          <g key={r.item.id ?? i} onClick={() => onSelect(r.item)} style={{ cursor: 'pointer' }}>
+            <rect
+              x={r.x} y={r.y} width={r.w} height={r.h}
+              fill={TREEMAP_COLORS[i % TREEMAP_COLORS.length]}
+              stroke={isActive ? '#3D1C02' : '#ffffff'}
+              strokeWidth={isActive ? 3.5 : 2}
+              opacity={isActive ? 1 : 0.92}
+            />
+            {showLabel && (
+              <>
+                <text x={r.x + 10} y={r.y + 23} fill="#ffffff" fontSize="14" fontWeight="800" style={{ pointerEvents: 'none' }}>
+                  {label}
+                </text>
+                <text x={r.x + 10} y={r.y + 41} fill="rgba(255,255,255,0.88)" fontSize="12" fontWeight="600" style={{ pointerEvents: 'none' }}>
+                  {fmt(Number(r.item.total))}
+                </text>
+                {r.h > 62 && (
+                  <text x={r.x + 10} y={r.y + 58} fill="rgba(255,255,255,0.72)" fontSize="11" style={{ pointerEvents: 'none' }}>
+                    {share.toFixed(1)}% del total
+                  </text>
+                )}
+              </>
+            )}
+            <title>{`${r.item.nombre}\nVentas: ${fmt(Number(r.item.total))}\nUnidades: ${r.item.cantidad}\nParticipación: ${share.toFixed(1)}%`}</title>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 // Helper to format date strings for inputs
 function toISO(d: Date) {
   return d.toISOString().split('T')[0];
@@ -209,8 +287,24 @@ export default function GlobalCategoriesReport() {
   }, [isTrendModalOpen, selectedCat, trendDateFrom, trendDateTo, trendGroup, fetchCategoryTrend]);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFrom = localStorage.getItem('bretone_date_from');
+      const savedTo = localStorage.getItem('bretone_date_to');
+      if (savedFrom && savedTo) {
+        setDateFrom(savedFrom);
+        setDateTo(savedTo);
+      }
+    }
     setMounted(true);
   }, []);
+
+  // Persist the selected period to shared localStorage
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('bretone_date_from', dateFrom);
+      localStorage.setItem('bretone_date_to', dateTo);
+    }
+  }, [dateFrom, dateTo, mounted]);
 
   // Fetch global categories list
   const fetchCategories = useCallback(async (from: string, to: string) => {
@@ -244,8 +338,8 @@ export default function GlobalCategoriesReport() {
   }, []);
 
   useEffect(() => {
-    fetchCategories(dateFrom, dateTo);
-  }, [dateFrom, dateTo, fetchCategories]);
+    if (mounted) fetchCategories(dateFrom, dateTo);
+  }, [dateFrom, dateTo, mounted, fetchCategories]);
 
   // Fetch product breakdown inside selected category
   const fetchCategoryDetails = useCallback(async (catId: number | null, catName: string) => {
@@ -505,6 +599,28 @@ export default function GlobalCategoriesReport() {
             <span className={styles.kpiValue}>{loading ? '—' : categoriesList.length}</span>
             <span className={styles.kpiSub}>categorías activas</span>
           </div>
+        </div>
+      </div>
+
+      {/* ====== TREEMAP (mapa de rectángulos) ====== */}
+      <div className={styles.treemapCard}>
+        <div className={styles.treemapHeader}>
+          <div>
+            <h3 className={styles.treemapTitle}>Mapa de Categorías</h3>
+            <p className={styles.treemapSub}>
+              El tamaño de cada rectángulo es proporcional a sus ventas. Haz clic en uno para ver su detalle.
+            </p>
+          </div>
+        </div>
+        <div className={styles.treemapBody}>
+          {loading ? (
+            <div className={styles.chartLoading}>
+              <div className={styles.spinner} />
+              <span>Construyendo mapa de categorías...</span>
+            </div>
+          ) : (
+            <CategoryTreemap data={categoriesList} selected={selectedCat} onSelect={setSelectedCat} />
+          )}
         </div>
       </div>
 

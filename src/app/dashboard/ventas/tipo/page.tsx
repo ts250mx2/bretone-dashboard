@@ -201,8 +201,24 @@ export default function TipoVentaReport() {
   const [modalTab, setModalTab] = useState<'monto' | 'cantidad'>('monto');
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFrom = localStorage.getItem('bretone_date_from');
+      const savedTo = localStorage.getItem('bretone_date_to');
+      if (savedFrom && savedTo) {
+        setDateFrom(savedFrom);
+        setDateTo(savedTo);
+      }
+    }
     setMounted(true);
   }, []);
+
+  // Persist the selected period to shared localStorage
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('bretone_date_from', dateFrom);
+      localStorage.setItem('bretone_date_to', dateTo);
+    }
+  }, [dateFrom, dateTo, mounted]);
 
   const fetchData = useCallback(async (from: string, to: string) => {
     if (!from || !to) return;
@@ -222,8 +238,8 @@ export default function TipoVentaReport() {
   }, []);
 
   useEffect(() => {
-    fetchData(dateFrom, dateTo);
-  }, [dateFrom, dateTo, fetchData]);
+    if (mounted) fetchData(dateFrom, dateTo);
+  }, [dateFrom, dateTo, mounted, fetchData]);
 
   const handlePeriod = (p: Period) => {
     const [from, to] = datesForPeriod(p);

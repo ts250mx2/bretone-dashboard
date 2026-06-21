@@ -108,6 +108,28 @@ body {
   color: hsl(var(--foreground));
   overflow-x: hidden;
   font-family: 'Outfit', system-ui, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Smooth momentum scrolling for horizontal table/chart wrappers on touch devices */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent iOS Safari from auto-zooming when focusing native inputs on small screens.
+   Inputs are full-width / centered at these breakpoints, so 16px is safe for layout. */
+@media (max-width: 600px) {
+  input[type="date"],
+  input[type="search"],
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  textarea,
+  select {
+    font-size: 16px;
+  }
 }
 
 /* ============================================

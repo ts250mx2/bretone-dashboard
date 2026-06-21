@@ -207,8 +207,24 @@ export default function SalesReport() {
   const [ticketError, setTicketError] = useState('');
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedFrom = localStorage.getItem('bretone_date_from');
+      const savedTo = localStorage.getItem('bretone_date_to');
+      if (savedFrom && savedTo) {
+        setDateFrom(savedFrom);
+        setDateTo(savedTo);
+      }
+    }
     setMounted(true);
   }, []);
+
+  // Persist the selected period to shared localStorage
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('bretone_date_from', dateFrom);
+      localStorage.setItem('bretone_date_to', dateTo);
+    }
+  }, [dateFrom, dateTo, mounted]);
 
   // ─── Fetch analytics data ──────────────────────────────────────────────────
   const fetchReportData = useCallback(async (from: string, to: string, gb: GroupBy, tg: 'dia' | 'semana' | 'mes') => {
