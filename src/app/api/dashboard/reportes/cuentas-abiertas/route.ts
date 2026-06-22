@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       FROM tblVentas v
       LEFT JOIN tblDetalleVentas d ON v.IdVenta = d.IdVenta AND v.IdApertura = d.IdApertura
       LEFT JOIN tblUsuarios u ON v.IdUsuarioMesa = u.IdUsuario
-      WHERE v.Cancelada = 0 AND v.Efectivo = 0 AND v.Tarjeta = 0
+      WHERE v.Cancelada = 0 AND v.Efectivo = 0 AND v.Tarjeta = 0 AND DATE(v.FechaVenta) = CURDATE()
       GROUP BY
           v.IdVenta,
           v.IdApertura,
