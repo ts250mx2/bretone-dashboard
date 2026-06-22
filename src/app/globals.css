@@ -113,7 +113,11 @@ body {
 }
 
 /* Smooth momentum scrolling for horizontal table/chart wrappers on touch devices */
-* {
+.tableWrapper,
+.chartWrapper,
+[class*="tableWrapper"],
+[class*="chartWrapper"],
+[style*="overflow"] {
   -webkit-overflow-scrolling: touch;
 }
 
@@ -136,19 +140,32 @@ body {
    Premium Scrollbars — Bretone Style
    ============================================ */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(61, 28, 2, 0.03);
+  border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(61, 28, 2, 0.18);
+  background: rgba(61, 28, 2, 0.25);
   border-radius: 999px;
-  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(237, 166, 10, 0.55);
+  background: rgba(237, 166, 10, 0.7);
+}
+
+/* Ensure tables inside horizontal scroll containers have a minimum width to prevent columns
+   from squishing and to trigger the horizontal scrollbar. */
+[class*="tableWrapper"] table,
+.tableWrapper table,
+[style*="overflow-x"] table,
+[style*="overflowX"] table {
+  min-width: 900px;
+  width: 100%;
 }
 
 /* ============================================

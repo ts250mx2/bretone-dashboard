@@ -628,7 +628,7 @@ export default function SalesReport() {
           </div>
         </div>
 
-        <div className={styles.tableWrapper} style={{ maxHeight: '800px', overflowY: 'auto', position: 'relative' }}>
+        <div className={styles.tableWrapper} style={{ maxHeight: '800px', overflowY: 'auto', overflowX: 'auto', position: 'relative' }}>
           {ticketsLoading ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 0', gap: '0.75rem' }}>
               <div className={styles.spinner} />
