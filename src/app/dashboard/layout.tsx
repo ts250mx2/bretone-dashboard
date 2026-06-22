@@ -264,7 +264,7 @@ export default function DashboardLayout({
             </header>
 
             {/* ====== SIDEBAR + CONTENT ====== */}
-            <div className="flex flex-1 pt-16 min-h-screen">
+            <div className="flex flex-1 pt-16 min-h-screen min-w-0">
                 <Sidebar
                     isCollapsed={isCollapsed}
                     setIsCollapsed={setIsCollapsed}
@@ -273,7 +273,7 @@ export default function DashboardLayout({
                 />
 
                 <div className={cn(
-                    "flex-1 flex flex-col min-h-[calc(100vh-4rem)] transition-all duration-300",
+                    "flex-1 flex flex-col min-h-[calc(100vh-4rem)] transition-all duration-300 min-w-0",
                     isCollapsed ? "lg:ml-20" : "lg:ml-64"
                 )}>
                     <main className="flex-1 p-4 lg:p-8 relative z-10">

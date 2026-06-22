@@ -140,22 +140,20 @@ body {
    Premium Scrollbars — Bretone Style
    ============================================ */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(61, 28, 2, 0.03);
+  background: rgba(61, 28, 2, 0.04);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(61, 28, 2, 0.25);
+  background: rgba(61, 28, 2, 0.35);
   border-radius: 999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
   transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(237, 166, 10, 0.7);
+  background: rgba(237, 166, 10, 0.75);
 }
 
 /* Ensure tables inside horizontal scroll containers have a minimum width to prevent columns
