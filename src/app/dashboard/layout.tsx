@@ -35,6 +35,7 @@ const segmentMap: Record<string, string> = {
     'margen': 'Margen & Rentabilidad',
     'productos-global': 'Productos Global',
     'agente': 'Asistente IA',
+    'cuentas-abiertas': 'Cuentas Abiertas',
 };
 
 const searchItems = [
@@ -51,6 +52,7 @@ const searchItems = [
     { name: 'Reporte de Alertas', href: '/dashboard/reportes/alertas', category: 'Otros Reportes' },
     { name: 'Reporte de Asistencias', href: '/dashboard/reportes/asistencias', category: 'Otros Reportes' },
     { name: 'Reporte de Consumos', href: '/dashboard/reportes/consumos', category: 'Otros Reportes' },
+    { name: 'Reporte de Cuentas Abiertas', href: '/dashboard/reportes/cuentas-abiertas', category: 'Otros Reportes' },
     { name: 'Productos Global', href: '/dashboard/ventas/productos-global', category: 'Ventas' },
     { name: 'Margen & Rentabilidad', href: '/dashboard/reportes/margen', category: 'Reportes' },
     { name: 'Retiros de Caja', href: '/dashboard/ventas/retiros', category: 'Ventas' },
