@@ -3,36 +3,34 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Clock,
-  ReceiptText,
   AlertCircle,
   Eye,
   X,
   RefreshCw,
   Users,
+  User,
   DollarSign,
-  TrendingUp,
   Download,
   AlertTriangle,
+  UtensilsCrossed,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import styles from './cuentas.module.css';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
-interface OpenAccountRow {
-  IdVenta: number;
-  IdApertura: number;
-  Folio: string;
-  FechaVenta: string;
+interface OpenTableRow {
+  IdMesa: number;
+  Apertura: string;
   Total: number;
-  Personas: number;
-  TipoVenta: string;
-  Mesero: string;
   CantidadProductos: number;
+  IdMesero: number | null;
+  Mesero: string;
+  Personas: number;
 }
 
 interface ItemRow {
-  Cantidad: number;
   Descripcion: string;
+  Cantidad: number;
   Precio: number;
   Descuento: number;
   Total: number;
@@ -42,6 +40,9 @@ interface ItemRow {
 const fmt = (n: number) =>
   new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 }).format(n || 0);
 
+// La numeración real de mesa es IdMesa + 1 (el POS guarda el índice base 0)
+const mesaLabel = (idMesa: number) => `Mesa ${idMesa + 1}`;
+
 // Format date to local time (HH:MM:SS)
 const formatTimeOnly = (dateStr: string) => {
   if (!dateStr) return '—';
@@ -49,6 +50,15 @@ const formatTimeOnly = (dateStr: string) => {
   if (isNaN(d.getTime())) return '—';
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} hrs`;
+};
+
+// Compact local time (HH:MM) for the cards
+const formatShortTime = (dateStr: string) => {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '—';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
 // Format date to local full datetime
@@ -108,15 +118,16 @@ function ElapsedTimer({ startDateStr }: { startDateStr: string }) {
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function OpenAccountsReport() {
-  const [data, setData] = useState<OpenAccountRow[]>([]);
+  const [data, setData] = useState<OpenTableRow[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [mounted, setMounted] = useState(false);
 
   // Detail Modal State
-  const [selectedTicket, setSelectedTicket] = useState<OpenAccountRow | null>(null);
+  const [selectedTable, setSelectedTable] = useState<OpenTableRow | null>(null);
   const [ticketItems, setTicketItems] = useState<ItemRow[]>([]);
+  const [ticketMesero, setTicketMesero] = useState<string>('Sin asignar');
   const [ticketLoading, setTicketLoading] = useState(false);
   const [ticketError, setTicketError] = useState('');
 
@@ -148,33 +159,32 @@ export default function OpenAccountsReport() {
     return () => clearInterval(interval);
   }, [fetchOpenAccounts]);
 
-  // Client-side search filtering
+  // Client-side search filtering (por número de mesa o mesero)
   const filteredData = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return data;
     return data.filter(row =>
-      (row.Folio || '').toLowerCase().includes(q) ||
-      (row.Mesero || '').toLowerCase().includes(q) ||
-      (row.TipoVenta || '').toLowerCase().includes(q)
+      mesaLabel(row.IdMesa).toLowerCase().includes(q) ||
+      String(row.IdMesa + 1).includes(q) ||
+      (row.Mesero || '').toLowerCase().includes(q)
     );
   }, [data, searchQuery]);
 
-  // Modal detailed ticket items
-  const handleOpenItems = async (row: OpenAccountRow) => {
-    setSelectedTicket(row);
+  // Open the detail modal for a table and load its products + waiter
+  const handleOpenTable = useCallback(async (row: OpenTableRow) => {
+    setSelectedTable(row);
     setTicketLoading(true);
     setTicketError('');
     setTicketItems([]);
+    setTicketMesero(row.Mesero || 'Sin asignar');
     try {
-      const params = new URLSearchParams({
-        idVenta: String(row.IdVenta),
-        idApertura: String(row.IdApertura)
-      });
-      const res = await fetch(`/api/ventas-items?${params}`);
-      if (!res.ok) throw new Error('Error al cargar artículos de la cuenta');
+      const params = new URLSearchParams({ mesa: String(row.IdMesa) });
+      const res = await fetch(`/api/dashboard/reportes/cuentas-abiertas?${params}`);
+      if (!res.ok) throw new Error('Error al cargar el detalle de la mesa');
       const json = await res.json();
       if (json.success) {
         setTicketItems(json.data || []);
+        if (json.mesero) setTicketMesero(json.mesero);
       } else {
         throw new Error(json.error || 'Error al obtener productos');
       }
@@ -183,10 +193,10 @@ export default function OpenAccountsReport() {
     } finally {
       setTicketLoading(false);
     }
-  };
+  }, []);
 
   // KPIs
-  const totalCuentas = data.length;
+  const totalMesas = data.length;
 
   const totalMontoAbierto = useMemo(() => {
     return data.reduce((acc, row) => acc + Number(row.Total), 0);
@@ -197,42 +207,42 @@ export default function OpenAccountsReport() {
     if (data.length === 0) return 0;
     const now = new Date().getTime();
     const sum = data.reduce((acc, row) => {
-      const start = new Date(row.FechaVenta).getTime();
+      const start = new Date(row.Apertura).getTime();
       return acc + (now - start);
     }, 0);
     return Math.floor((sum / data.length) / 60000);
   }, [data]);
 
-  // Find the oldest open account
-  const oldestAccount = useMemo(() => {
+  // Find the oldest open table (computed by earliest Apertura, independent of list order)
+  const oldestTable = useMemo(() => {
     if (data.length === 0) return null;
-    // Data is sorted ASC by FechaVenta in DB query, so first record is oldest
-    return data[0];
+    return data.reduce((oldest, row) =>
+      new Date(row.Apertura).getTime() < new Date(oldest.Apertura).getTime() ? row : oldest
+    );
   }, [data]);
 
   const oldestMinutes = useMemo(() => {
-    if (!oldestAccount) return 0;
-    const start = new Date(oldestAccount.FechaVenta).getTime();
+    if (!oldestTable) return 0;
+    const start = new Date(oldestTable.Apertura).getTime();
     const now = new Date().getTime();
     return Math.floor((now - start) / 60000);
-  }, [oldestAccount]);
+  }, [oldestTable]);
 
   // Excel Export
   const handleExportExcel = () => {
     if (filteredData.length === 0) return;
 
     const formatted = filteredData.map((row) => {
-      const durationMs = new Date().getTime() - new Date(row.FechaVenta).getTime();
+      const durationMs = new Date().getTime() - new Date(row.Apertura).getTime();
       const durationMins = Math.floor(durationMs / 60000);
       return {
-        'Folio Cuenta': row.Folio,
-        'Tipo de Venta': row.TipoVenta,
-        'Mesero / Cajero': row.Mesero,
+        'Mesa': mesaLabel(row.IdMesa),
+        'Mesero / Atiende': row.Mesero,
         'Comensales': row.Personas,
         'Artículos Pedidos': row.CantidadProductos,
         'Monto Acumulado ($)': row.Total,
-        'Hora de Apertura': formatFullDateTime(row.FechaVenta),
-        'Minutos Transcurridos': durationMins
+        'Hora de Apertura': formatFullDateTime(row.Apertura),
+        'Minutos Abierta': durationMins,
       };
     });
 
@@ -254,7 +264,7 @@ export default function OpenAccountsReport() {
           <Clock size={34} style={{ color: 'var(--bretone-gold)' }} />
           <div>
             <h1>Monitoreo de Cuentas Abiertas</h1>
-            <p className={styles.subtitle}>Supervisión en tiempo real de mesas activas y tiempos de ocupación</p>
+            <p className={styles.subtitle}>Mesas activas en tiempo real con su tiempo de ocupación</p>
           </div>
         </div>
 
@@ -282,15 +292,15 @@ export default function OpenAccountsReport() {
 
       {/* ====== KPIs ROW ====== */}
       <div className={styles.kpiGrid}>
-        {/* KPI: Cuentas Activas */}
+        {/* KPI: Mesas Activas */}
         <div className={`${styles.kpiCard} kpi-glow-brown`}>
           <div className={styles.kpiIcon} style={{ background: 'rgba(61, 28, 2, 0.08)', color: '#3D1C02' }}>
-            <ReceiptText size={20} />
+            <UtensilsCrossed size={20} />
           </div>
           <div className={styles.kpiInfo}>
-            <span className={styles.kpiLabel}>Cuentas Activas</span>
-            <span className={styles.kpiValue}>{loading ? '—' : totalCuentas}</span>
-            <span className={styles.kpiSub}>En comedor y otros tipos</span>
+            <span className={styles.kpiLabel}>Mesas Activas</span>
+            <span className={styles.kpiValue}>{loading ? '—' : totalMesas}</span>
+            <span className={styles.kpiSub}>Cuentas abiertas en el comedor</span>
           </div>
         </div>
 
@@ -304,7 +314,7 @@ export default function OpenAccountsReport() {
             <span className={styles.kpiValue} style={{ color: 'var(--bretone-gold)' }}>
               {loading ? '—' : fmt(totalMontoAbierto)}
             </span>
-            <span className={styles.kpiSub}>Facturación en proceso</span>
+            <span className={styles.kpiSub}>Consumo en proceso</span>
           </div>
         </div>
 
@@ -316,13 +326,13 @@ export default function OpenAccountsReport() {
           <div className={styles.kpiInfo}>
             <span className={styles.kpiLabel}>Permanencia Promedio</span>
             <span className={styles.kpiValue} style={{ color: '#2E6F40' }}>
-              {loading ? '—' : totalCuentas > 0 ? `${avgDurationMinutes} min` : '0 min'}
+              {loading ? '—' : totalMesas > 0 ? `${avgDurationMinutes} min` : '0 min'}
             </span>
             <span className={styles.kpiSub}>Tiempo de ocupación medio</span>
           </div>
         </div>
 
-        {/* KPI: Mayor Retraso */}
+        {/* KPI: Mayor Espera */}
         <div className={`${styles.kpiCard} kpi-glow-red`}>
           <div className={styles.kpiIcon} style={{ background: 'rgba(217, 76, 61, 0.08)', color: 'var(--danger)' }}>
             <AlertCircle size={20} />
@@ -330,10 +340,10 @@ export default function OpenAccountsReport() {
           <div className={styles.kpiInfo}>
             <span className={styles.kpiLabel}>Mayor Espera</span>
             <span className={styles.kpiValue} style={{ color: oldestMinutes >= 30 ? 'var(--danger)' : 'var(--text)' }}>
-              {loading ? '—' : oldestAccount ? `${oldestMinutes} min` : '0 min'}
+              {loading ? '—' : oldestTable ? `${oldestMinutes} min` : '0 min'}
             </span>
             <span className={styles.kpiSub}>
-              {oldestAccount ? `Folio: #${oldestAccount.Folio}` : 'Sin cuentas'}
+              {oldestTable ? mesaLabel(oldestTable.IdMesa) : 'Sin cuentas'}
             </span>
           </div>
         </div>
@@ -343,15 +353,15 @@ export default function OpenAccountsReport() {
       <div className={styles.tableCard}>
         <div className={styles.tableHeader}>
           <div className={styles.tableTitleBlock}>
-            <h3>Listado de Comensales y Servicios Activos</h3>
-            <p>Relación en vivo de comandas abiertas en el establecimiento</p>
+            <h3>Mesas Abiertas en el Establecimiento</h3>
+            <p>Toca una mesa para ver su comanda y el mesero que la atiende</p>
           </div>
           <div className={styles.tableActions}>
             <div className={styles.tableSearchWrapper}>
               <Users size={14} className={styles.tableSearchIcon} />
               <input
                 type="text"
-                placeholder="Buscar por folio, mesero o tipo..."
+                placeholder="Buscar por mesa o mesero..."
                 className={styles.tableSearchInput}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -368,87 +378,72 @@ export default function OpenAccountsReport() {
         {loading ? (
           <div className={styles.chartLoading}>
             <div className={styles.spinner} />
-            <span>Consultando cuentas abiertas en la base de datos...</span>
+            <span>Consultando mesas abiertas en la base de datos...</span>
           </div>
         ) : filteredData.length === 0 ? (
           <div className={styles.chartEmpty}>
-            {searchQuery ? 'No se encontraron comanda activas que coincidan con la búsqueda' : 'No hay cuentas abiertas registradas en este momento'}
+            {searchQuery ? 'No se encontraron mesas que coincidan con la búsqueda' : 'No hay mesas abiertas en este momento'}
           </div>
         ) : (
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th style={{ width: '130px' }}>Folio Cuenta</th>
-                  <th style={{ width: '150px' }}>Tipo de Venta</th>
-                  <th>Colaborador / Mesero</th>
-                  <th style={{ width: '120px', textAlign: 'center' }}>Personas</th>
-                  <th style={{ width: '120px', textAlign: 'center' }}>Productos</th>
-                  <th style={{ width: '150px', textAlign: 'right' }}>Monto Actual</th>
-                  <th style={{ width: '180px', textAlign: 'center' }}>Hora Apertura</th>
-                  <th style={{ width: '160px', textAlign: 'center' }}>Tiempo Abierto</th>
-                  <th style={{ width: '130px', textAlign: 'center' }}>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.map((row) => (
-                  <tr key={row.Folio}>
-                    <td style={{ fontWeight: 800 }}>#{row.Folio}</td>
-                    <td>
-                      <span
-                        className={`${styles.badge} ${
-                          row.TipoVenta === 'Mesa'
-                            ? styles.badgeMesa
-                            : row.TipoVenta === 'Para Llevar'
-                            ? styles.badgeLlevar
-                            : row.TipoVenta === 'Domicilio'
-                            ? styles.badgeDomicilio
-                            : styles.badgeOtro
-                        }`}
-                      >
-                        {row.TipoVenta}
-                      </span>
-                    </td>
-                    <td className={styles.userCol}>{row.Mesero}</td>
-                    <td style={{ textAlign: 'center' }}>{row.Personas} comensales</td>
-                    <td style={{ textAlign: 'center' }}>{row.CantidadProductos} uds</td>
-                    <td style={{ textAlign: 'right', fontWeight: 800, color: 'var(--text)' }}>
-                      {fmt(row.Total)}
-                    </td>
-                    <td className={styles.dateCol} style={{ textAlign: 'center' }}>
-                      {formatTimeOnly(row.FechaVenta)}
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <ElapsedTimer startDateStr={row.FechaVenta} />
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <button
-                        onClick={() => handleOpenItems(row)}
-                        className={styles.btnDetail}
-                      >
-                        <Eye size={12} /> Detalle
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className={styles.cardsGrid}>
+            {filteredData.map((row) => (
+              <button
+                key={row.IdMesa}
+                className={styles.mesaCard}
+                onClick={() => handleOpenTable(row)}
+              >
+                <div className={styles.mesaCardTop}>
+                  <span className={styles.mesaCardTitle}>
+                    <UtensilsCrossed size={18} /> {mesaLabel(row.IdMesa)}
+                  </span>
+                  <ElapsedTimer startDateStr={row.Apertura} />
+                </div>
+
+                <div className={styles.mesaCardMesero}>
+                  <User size={13} /> {row.Mesero}
+                </div>
+
+                <div className={styles.mesaCardAmount}>{fmt(row.Total)}</div>
+
+                <div className={styles.mesaCardStats}>
+                  <div className={styles.mesaCardStat}>
+                    <span className={styles.mesaCardStatLabel}>Personas</span>
+                    <span className={styles.mesaCardStatValue}>
+                      <Users size={12} style={{ verticalAlign: '-2px', marginRight: 3 }} />
+                      {row.Personas}
+                    </span>
+                  </div>
+                  <div className={styles.mesaCardStat}>
+                    <span className={styles.mesaCardStatLabel}>Productos</span>
+                    <span className={styles.mesaCardStatValue}>{row.CantidadProductos} uds</span>
+                  </div>
+                  <div className={styles.mesaCardStat}>
+                    <span className={styles.mesaCardStatLabel}>Apertura</span>
+                    <span className={styles.mesaCardStatValue}>{formatShortTime(row.Apertura)} hrs</span>
+                  </div>
+                </div>
+
+                <div className={styles.mesaCardFooter}>
+                  <Eye size={13} /> Ver comanda
+                </div>
+              </button>
+            ))}
           </div>
         )}
       </div>
 
       {/* ====== DETAIL MODAL ====== */}
-      {selectedTicket && (
-        <div className={styles.modalOverlay} onClick={() => setSelectedTicket(null)}>
+      {selectedTable && (
+        <div className={styles.modalOverlay} onClick={() => setSelectedTable(null)}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
               <div className={styles.modalTitleGroup}>
-                <h3>Comanda de Consumo Activa</h3>
+                <h3>Comanda de la {mesaLabel(selectedTable.IdMesa)}</h3>
                 <p className={styles.modalSubtitle}>
-                  Folio: #{selectedTicket.Folio} | Mesero: {selectedTicket.Mesero}
+                  Mesero: {ticketMesero} · {selectedTable.Personas} {selectedTable.Personas === 1 ? 'persona' : 'personas'} · Abierta a las {formatTimeOnly(selectedTable.Apertura)}
                 </p>
               </div>
-              <button className={styles.modalCloseBtn} onClick={() => setSelectedTicket(null)}>
+              <button className={styles.modalCloseBtn} onClick={() => setSelectedTable(null)}>
                 <X size={16} />
               </button>
             </div>
@@ -463,6 +458,8 @@ export default function OpenAccountsReport() {
                 <AlertTriangle size={18} style={{ marginRight: '0.5rem' }} />
                 {ticketError}
               </div>
+            ) : ticketItems.length === 0 ? (
+              <div className={styles.chartEmpty}>Esta mesa no tiene productos registrados</div>
             ) : (
               <>
                 <table className={styles.modalTable}>
@@ -489,11 +486,11 @@ export default function OpenAccountsReport() {
                 <div className={styles.ticketTotals}>
                   <div className={styles.totalRow}>
                     <span>Artículos Totales:</span>
-                    <span>{ticketItems.reduce((acc, curr) => acc + curr.Cantidad, 0)} uds</span>
+                    <span>{ticketItems.reduce((acc, curr) => acc + Number(curr.Cantidad), 0)} uds</span>
                   </div>
                   <div className={styles.grandTotalRow}>
                     <span>Total de la Cuenta:</span>
-                    <span>{fmt(selectedTicket.Total)}</span>
+                    <span>{fmt(selectedTable.Total)}</span>
                   </div>
                 </div>
               </>
