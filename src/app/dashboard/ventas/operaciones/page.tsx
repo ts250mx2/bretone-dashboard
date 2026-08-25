@@ -595,6 +595,7 @@ export default function OperacionesPage() {
               ) : salesList.length === 0 ? (
                 <div className={styles.emptyState}>No hay tickets registrados en esta sesión.</div>
               ) : (
+                <>
                 <div className={styles.tableWrapper}>
                   <table className={styles.table}>
                     <thead>
@@ -653,6 +654,28 @@ export default function OperacionesPage() {
                     </tbody>
                   </table>
                 </div>
+                <div style={{ marginTop: '1rem', border: '1px solid rgba(61, 28, 2, 0.1)', borderRadius: '12px', overflow: 'hidden' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0.6rem 1rem', padding: '1rem', background: '#FFFBF2', fontSize: '0.82rem' }}>
+                    <span>Consumo facturable</span><strong>{fmt(selectedTicket.taxableConsumption ?? selectedTicket.Total)}</strong>
+                    <span>Propina ({selectedTicket.tipPercentage}%) · no facturable</span><strong>{fmt(selectedTicket.tip)}</strong>
+                    <span style={{ borderTop: '1px dashed rgba(61, 28, 2, 0.25)', paddingTop: '0.6rem', fontWeight: 800 }}>Total con propina</span><strong style={{ borderTop: '1px dashed rgba(61, 28, 2, 0.25)', paddingTop: '0.6rem', color: '#149D92' }}>{fmt(selectedTicket.totalWithTip)}</strong>
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(selectedTicket.selfInvoiceUrl);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 1800);
+                    }}
+                    style={{ width: '100%', border: 0, borderTop: '1px solid rgba(61, 28, 2, 0.08)', background: '#3D1C02', color: '#fff', padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', fontWeight: 800, cursor: 'pointer' }}
+                  >
+                    {copied ? <Check size={14} /> : <Clipboard size={14} />}
+                    {copied ? 'Enlace copiado' : 'Copiar enlace de autofacturación'}
+                  </button>
+                </div>
+                <p style={{ marginTop: '0.65rem', color: 'var(--text-muted)', fontSize: '0.72rem', textAlign: 'center' }}>
+                  Disponible hasta {new Date(selectedTicket.selfInvoiceExpiresAt).toLocaleString('es-MX')}
+                </p>
+                </>
               )}
             </div>
           </div>

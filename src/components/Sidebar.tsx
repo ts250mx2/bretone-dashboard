@@ -20,6 +20,8 @@ import {
     XCircle,
     Clock,
     Bell,
+    FileCheck2,
+    FilePlus2,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -35,6 +37,14 @@ type SidebarItem = {
 const sidebarItems: SidebarItem[] = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Asistente IA', href: '/dashboard/agente', icon: Bot },
+    {
+        name: 'Facturación',
+        icon: FileCheck2,
+        subItems: [
+            { name: 'Facturas realizadas', href: '/dashboard/facturacion', icon: FileCheck2 },
+            { name: 'Nueva factura', href: '/dashboard/facturacion/nueva', icon: FilePlus2 },
+        ]
+    },
     {
         name: 'Ventas',
         icon: ShoppingBag,
@@ -77,6 +87,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
     const pathname = usePathname();
     const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>({
         'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes/ventas'),
+        'Facturación': pathname.includes('/facturacion'),
         'Otros Reportes': pathname.includes('/reportes/alertas') || pathname.includes('/reportes/asistencias') || pathname.includes('/reportes/consumos') || pathname.includes('/reportes/cuentas-abiertas'),
     });
 
@@ -91,6 +102,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
         } else {
             setExpandedMenus({
                 'Ventas': pathname.includes('/ventas') || pathname.includes('/reportes/ventas'),
+                'Facturación': pathname.includes('/facturacion'),
                 'Otros Reportes': pathname.includes('/reportes/alertas') || pathname.includes('/reportes/asistencias') || pathname.includes('/reportes/consumos') || pathname.includes('/reportes/cuentas-abiertas'),
             });
         }

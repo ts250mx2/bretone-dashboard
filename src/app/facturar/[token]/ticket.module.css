@@ -1,0 +1,44 @@
+.page { min-height: 100vh; background: #f4eee5; padding: 32px clamp(18px, 5vw, 72px) 60px; color: #351b0b; }
+.brand { max-width: 1060px; margin: 0 auto 28px; display: flex; align-items: center; gap: 18px; }
+.brand img { width: 118px; height: 52px; object-fit: contain; }
+.brand div { border-left: 1px solid rgba(53,27,11,.18); padding-left: 18px; display: flex; flex-direction: column; }
+.brand span, .receiptTop span { color: #9a5b29; font-size: 11px; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
+.brand strong { font-size: 17px; }
+.layout { max-width: 1060px; margin: 0 auto; display: grid; grid-template-columns: minmax(260px, .72fr) minmax(0, 1.28fr); gap: 28px; align-items: start; }
+.receipt { position: relative; background: #fffdf7; padding: 26px 26px 34px; box-shadow: 0 16px 42px rgba(53,27,11,.11); font-family: var(--font-outfit), sans-serif; }
+.receiptTop { display: flex; gap: 12px; align-items: center; }
+.receiptTop div { display: flex; flex-direction: column; }
+.receiptTop strong { font: 800 24px/1 var(--font-outfit), sans-serif; }
+.date { color: rgba(53,27,11,.58); font-size: 13px; margin: 18px 0; }
+.rule { border-top: 1px dashed rgba(53,27,11,.3); margin: 4px 0 16px; }
+.line, .total { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; font-size: 14px; }
+.line:nth-of-type(4) { color: rgba(53,27,11,.62); }
+.total { margin-top: 12px; padding-top: 16px; border-top: 2px solid #351b0b; align-items: baseline; }
+.total strong { font-size: 25px; }
+.taxNote { margin-top: 22px; padding: 12px; border-radius: 10px; display: flex; gap: 9px; background: #e7f5f2; color: #11675f; font-size: 12px; line-height: 1.45; }
+.taxNote svg { flex: 0 0 auto; margin-top: 1px; }
+.receiptEdge { position: absolute; left: 0; right: 0; bottom: -9px; height: 18px; background: linear-gradient(135deg, transparent 9px, #fffdf7 0) 0 0/18px 18px repeat-x, linear-gradient(45deg, transparent 9px, #fffdf7 0) 0 0/18px 18px repeat-x; }
+.formCard { background: #fff; border: 1px solid rgba(53,27,11,.08); border-radius: 18px; box-shadow: 0 8px 30px rgba(53,27,11,.06); padding: clamp(24px, 4vw, 42px); }
+.eyebrow { display: flex; align-items: center; gap: 7px; color: #b26728; font-size: 11px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+.formCard h1 { font-size: clamp(28px, 4vw, 42px); line-height: 1; letter-spacing: -.035em; margin: 10px 0 12px; }
+.intro { color: rgba(53,27,11,.6); font-size: 14px; margin-bottom: 27px; }
+.form { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; }
+.form label { display: flex; flex-direction: column; gap: 7px; font-size: 12px; font-weight: 800; }
+.full { grid-column: 1 / -1; }
+.form input, .form select { width: 100%; min-height: 44px; border: 1px solid rgba(53,27,11,.18); border-radius: 9px; background: #fbf8f3; padding: 10px 12px; color: #351b0b; font: 600 14px var(--font-outfit), sans-serif; outline: none; }
+.form input:focus, .form select:focus { background: #fff; border-color: #d79624; box-shadow: 0 0 0 3px rgba(215,150,36,.14); }
+.submit { grid-column: 1 / -1; min-height: 48px; border: 0; border-radius: 10px; background: #351b0b; color: #fff; font: 800 14px var(--font-outfit), sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: transform .18s ease, background .18s ease; }
+.submit:hover { background: #5d3215; transform: translateY(-1px); }
+.submit:disabled { opacity: .65; cursor: wait; }
+.deadline { display: flex; align-items: center; gap: 7px; margin-top: 20px; color: rgba(53,27,11,.58); font-size: 12px; }
+.error { background: #fff0ee; color: #a82e23; border-radius: 9px; padding: 10px 12px; font-size: 13px; }
+.successBox, .expiredBox { display: flex; gap: 13px; padding: 18px; border-radius: 12px; }
+.successBox { background: #e7f5f2; color: #11675f; }
+.expiredBox { background: #fff3dd; color: #7d4b08; }
+.successBox p, .expiredBox p { font-size: 13px; margin-top: 3px; }
+.state { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #f4eee5; color: #351b0b; text-align: center; padding: 24px; }
+.spin { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 760px) { .page { padding-top: 20px; } .layout { grid-template-columns: 1fr; } .receipt { order: 2; } .formCard { order: 1; } }
+@media (max-width: 520px) { .brand div { display: none; } .form { grid-template-columns: 1fr; } .form label, .full, .submit { grid-column: 1; } }
+@media (prefers-reduced-motion: reduce) { .submit { transition: none; } .spin { animation-duration: 1.8s; } }

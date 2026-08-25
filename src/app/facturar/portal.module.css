@@ -1,0 +1,98 @@
+.page {
+  min-height: 100vh; padding: 28px 5vw 18px; position: relative; overflow: hidden;
+  background: #f7f1e8; color: #3d1c02;
+}
+.glow { position: absolute; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(227,162,28,.17), transparent 68%); top: -260px; right: -130px; pointer-events: none; }
+.header { height: 70px; display: flex; align-items: center; gap: 20px; position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; }
+.header img { object-fit: contain; }
+.headerRule { height: 30px; width: 1px; background: rgba(61,28,2,.18); }
+.header > span { font-size: .82rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(61,28,2,.62); }
+.shell { max-width: 1180px; margin: 50px auto 70px; display: grid; grid-template-columns: .82fr 1.18fr; gap: 88px; align-items: center; position: relative; z-index: 1; }
+.intro { padding-left: 18px; }
+.kicker { display: inline-flex; align-items: center; gap: 8px; color: #b4690e; text-transform: uppercase; letter-spacing: .16em; font-size: .74rem; font-weight: 800; }
+.intro h1 { font-size: clamp(3.4rem, 6vw, 5.8rem); font-weight: 800; letter-spacing: -.065em; line-height: .84; margin: 26px 0 28px; }
+.intro h1 em { font-family: Georgia, serif; font-weight: 400; color: #0e9488; }
+.intro > p { font-size: 1.07rem; line-height: 1.7; color: rgba(61,28,2,.65); max-width: 410px; }
+.eligibility { display: flex; gap: 13px; margin-top: 40px; padding: 18px; border-left: 3px solid #e3a21c; background: rgba(255,255,255,.55); max-width: 430px; }
+.eligibility > svg { color: #0e9488; flex: none; }
+.eligibility p { display: flex; flex-direction: column; gap: 4px; margin: 0; }
+.eligibility strong { font-size: .85rem; }
+.eligibility span { font-size: .78rem; line-height: 1.5; color: rgba(61,28,2,.6); }
+.card { background: #fffdfa; border: 1px solid rgba(61,28,2,.08); box-shadow: 0 30px 80px rgba(61,28,2,.13); border-radius: 24px; min-height: 570px; overflow: hidden; }
+.progress { height: 84px; display: grid; grid-template-columns: repeat(3,1fr); border-bottom: 1px solid rgba(61,28,2,.08); padding: 0 42px; }
+.progress > div { display: flex; align-items: center; justify-content: center; gap: 9px; color: rgba(61,28,2,.34); position: relative; }
+.progress > div:not(:last-child)::after { content: ""; position: absolute; width: 34px; height: 1px; background: rgba(61,28,2,.12); right: -17px; }
+.progress span { width: 25px; height: 25px; border-radius: 50%; border: 1px solid currentColor; display: grid; place-items: center; font-size: .7rem; font-weight: 800; }
+.progress small { font-size: .72rem; font-weight: 700; }
+.progress .progressActive { color: #0e9488; }
+.content { padding: 42px 52px 46px; }
+.titleIcon { width: 44px; height: 44px; border-radius: 12px; background: #f5ead5; color: #b4690e; display: grid; place-items: center; margin-bottom: 20px; }
+.titleIcon svg { width: 22px; }
+.content h2 { font-size: 2rem; letter-spacing: -.035em; margin: 0 0 8px; }
+.subtitle { margin: 0 0 28px; color: rgba(61,28,2,.58); font-size: .89rem; line-height: 1.55; }
+.lookupForm, .fiscalForm { display: grid; gap: 18px; }
+.lookupForm { grid-template-columns: 1.2fr .8fr; }
+.lookupForm label, .fiscalForm label { display: flex; flex-direction: column; gap: 8px; font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; color: rgba(61,28,2,.65); }
+.lookupForm input, .fiscalForm input, .fiscalForm select { height: 52px; width: 100%; border: 1px solid rgba(61,28,2,.15); border-radius: 10px; background: #fff; padding: 0 15px; color: #3d1c02; font: 600 .93rem Outfit, system-ui; outline: none; transition: .2s; }
+.lookupForm input:focus, .fiscalForm input:focus, .fiscalForm select:focus { border-color: #0e9488; box-shadow: 0 0 0 3px rgba(14,148,136,.1); }
+.lookupForm button, .fiscalForm button, .success button { grid-column: 1/-1; height: 54px; border: 0; border-radius: 10px; background: #3d1c02; color: #fff; font: 800 .88rem Outfit, system-ui; letter-spacing: .02em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: .2s; }
+.lookupForm button:hover, .fiscalForm button:hover, .success button:hover { background: #5a2e0c; transform: translateY(-1px); }
+.lookupForm button:disabled, .fiscalForm button:disabled { opacity: .65; cursor: wait; transform: none; }
+.lookupForm button span { font-size: 1.25rem; }
+.privacy { display: flex; align-items: center; justify-content: center; gap: 7px; font-size: .71rem; color: rgba(61,28,2,.42); margin: 22px 0 0; }
+.error { grid-column: 1/-1; background: #fff0ed; color: #a92f21; border: 1px solid rgba(217,76,61,.2); padding: 11px 13px; border-radius: 8px; font-size: .78rem; line-height: 1.45; }
+.back { border: 0; background: none; padding: 0; color: #0e9488; font: 700 .76rem Outfit, system-ui; display: flex; align-items: center; gap: 3px; cursor: pointer; margin-bottom: 20px; }
+.back svg { width: 17px; }
+.ticketSummary { background: #f7f1e8; border-radius: 12px; padding: 17px 20px; display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 30px; }
+.ticketSummary > div { display: flex; flex-direction: column; gap: 3px; }
+.ticketSummary > div + div { text-align: right; border-left: 1px dashed rgba(61,28,2,.18); }
+.ticketSummary span { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: rgba(61,28,2,.48); font-weight: 800; }
+.ticketSummary strong { font-size: 1.04rem; }
+.ticketSummary small { font-size: .7rem; color: rgba(61,28,2,.55); }
+.fiscalForm { grid-template-columns: 1fr 1fr; gap: 14px; }
+.wide { grid-column: 1/-1; }
+.fiscalForm input, .fiscalForm select { height: 46px; font-size: .82rem; }
+.fiscalForm button { height: 50px; margin-top: 2px; }
+.fiscalForm button svg { width: 18px; }
+.tipNote { display: flex; align-items: center; gap: 9px; background: rgba(14,148,136,.08); color: #0b7068; border-radius: 8px; padding: 10px 12px; font-size: .73rem; }
+.tipNote svg { width: 17px; flex: none; }
+.success { text-align: center; display: flex; min-height: 480px; flex-direction: column; align-items: center; justify-content: center; padding-left: 70px; padding-right: 70px; }
+.successIcon { width: 82px; height: 82px; border-radius: 50%; display: grid; place-items: center; background: rgba(14,148,136,.1); color: #0e9488; margin-bottom: 24px; }
+.successIcon svg { width: 42px; height: 42px; }
+.success h2 { font-size: 2.7rem; margin: 8px 0 14px; }
+.success p { color: rgba(61,28,2,.62); line-height: 1.7; margin: 0 0 28px; max-width: 410px; }
+.success p strong { color: #3d1c02; }
+.success button { width: 230px; }
+.spin { animation: spin .8s linear infinite; }
+.footer { max-width: 1180px; margin: auto; display: flex; justify-content: center; gap: 10px; text-transform: uppercase; letter-spacing: .12em; font-size: .64rem; font-weight: 700; color: rgba(61,28,2,.35); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; gap: 38px; margin-top: 30px; }
+  .intro { text-align: center; padding: 0; }
+  .intro > p, .eligibility { margin-left: auto; margin-right: auto; }
+  .intro h1 { font-size: 4.3rem; }
+  .card { max-width: 650px; width: 100%; margin: auto; }
+}
+@media (max-width: 600px) {
+  .page { padding: 14px 14px 22px; }
+  .header { height: 58px; justify-content: center; }
+  .header img { width: 105px; height: auto; }
+  .headerRule, .header > span { display: none; }
+  .shell { margin: 24px auto 45px; gap: 28px; }
+  .intro h1 { font-size: 3.25rem; margin: 18px 0; }
+  .intro > p { font-size: .92rem; }
+  .eligibility { margin-top: 24px; text-align: left; }
+  .card { min-height: 0; border-radius: 18px; }
+  .progress { height: 69px; padding: 0 13px; }
+  .progress small { font-size: .63rem; }
+  .progress > div { gap: 5px; }
+  .progress > div:not(:last-child)::after { display: none; }
+  .content { padding: 30px 22px 34px; }
+  .content h2 { font-size: 1.7rem; }
+  .lookupForm, .fiscalForm { grid-template-columns: 1fr; }
+  .lookupForm button, .wide, .fiscalForm .wide { grid-column: 1; }
+  .ticketSummary { padding: 14px; }
+  .ticketSummary strong { font-size: .9rem; }
+  .success { min-height: 420px; padding-left: 25px; padding-right: 25px; }
+  .success h2 { font-size: 2.2rem; }
+}

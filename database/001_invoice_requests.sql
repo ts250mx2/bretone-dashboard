@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS tblSolicitudesFacturaDashboard (
+  IdSolicitud BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  IdApertura INT NOT NULL,
+  IdVenta INT NOT NULL,
+  TipoReceptor ENUM('publico_general', 'cliente') NOT NULL,
+  RFC VARCHAR(13) NOT NULL,
+  RazonSocial VARCHAR(254) NOT NULL,
+  CodigoPostal VARCHAR(5) NOT NULL,
+  RegimenFiscal VARCHAR(3) NOT NULL,
+  UsoCFDI VARCHAR(3) NOT NULL,
+  Correo VARCHAR(254) NULL,
+  ConsumoFacturable DECIMAL(12,2) NOT NULL,
+  Propina DECIMAL(12,2) NOT NULL,
+  PorcentajePropina TINYINT UNSIGNED NOT NULL,
+  Estado ENUM('pendiente_timbrado', 'timbrada', 'cancelada') NOT NULL DEFAULT 'pendiente_timbrado',
+  UUID VARCHAR(36) NULL,
+  CreadaEn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  ActualizadaEn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (IdSolicitud),
+  UNIQUE KEY uq_solicitud_venta (IdApertura, IdVenta),
+  KEY idx_solicitudes_estado (Estado, CreadaEn)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

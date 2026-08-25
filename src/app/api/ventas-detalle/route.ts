@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { buildSelfInvoiceUrl, createSelfInvoiceToken, getBillingAmounts, getSelfInvoiceExpiry } from '@/lib/billing';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -55,9 +56,21 @@ export async function GET(request: NextRequest) {
 
     const salesData = await query(sqlQuery, params);
 
+    const origin = new URL(request.url).origin;
+    const enrichedSales = salesData.map((sale: any) => {
+      const amounts = getBillingAmounts(sale.Total, sale.IdApertura, sale.IdVenta);
+      const token = createSelfInvoiceToken(sale.IdApertura, sale.IdVenta, sale.FechaVenta);
+      return {
+        ...sale,
+        ...amounts,
+        selfInvoiceExpiresAt: getSelfInvoiceExpiry(sale.FechaVenta),
+        selfInvoiceUrl: buildSelfInvoiceUrl(origin, token),
+      };
+    });
+
     return NextResponse.json({
       success: true,
-      data: salesData
+      data: enrichedSales
     });
 
   } catch (error: any) {

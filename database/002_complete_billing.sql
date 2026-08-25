@@ -1,0 +1,46 @@
+ALTER TABLE tblSolicitudesFacturaDashboard
+  ADD COLUMN BaseGravable DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER PorcentajePropina,
+  ADD COLUMN IVA DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER BaseGravable,
+  ADD COLUMN IEPS DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER IVA;
+
+CREATE TABLE IF NOT EXISTS tblConfiguracionFiscalProductosDashboard (
+  IdProducto INT NOT NULL,
+  TasaIVA DECIMAL(6,3) NOT NULL DEFAULT 16.000,
+  TasaIEPS DECIMAL(6,3) NOT NULL DEFAULT 0.000,
+  ObjetoImpuesto VARCHAR(2) NOT NULL DEFAULT '02',
+  ActualizadaEn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (IdProducto)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS tblFacturasGlobalesDashboard (
+  IdFacturaGlobal BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  FechaOperacion DATE NOT NULL,
+  Periodicidad VARCHAR(2) NOT NULL DEFAULT '01',
+  Meses VARCHAR(2) NOT NULL,
+  Anio SMALLINT NOT NULL,
+  CodigoPostal VARCHAR(5) NOT NULL,
+  NumTickets INT NOT NULL,
+  BaseGravable DECIMAL(12,2) NOT NULL,
+  IVA DECIMAL(12,2) NOT NULL,
+  IEPS DECIMAL(12,2) NOT NULL,
+  ConsumoFacturable DECIMAL(12,2) NOT NULL,
+  Propinas DECIMAL(12,2) NOT NULL,
+  Estado ENUM('pendiente_timbrado','timbrada','cancelada') NOT NULL DEFAULT 'pendiente_timbrado',
+  UUID VARCHAR(36) NULL,
+  CreadaEn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (IdFacturaGlobal),
+  UNIQUE KEY uq_global_fecha (FechaOperacion)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS tblDetalleFacturaGlobalDashboard (
+  IdFacturaGlobal BIGINT UNSIGNED NOT NULL,
+  IdApertura INT NOT NULL,
+  IdVenta INT NOT NULL,
+  BaseGravable DECIMAL(12,2) NOT NULL,
+  IVA DECIMAL(12,2) NOT NULL,
+  IEPS DECIMAL(12,2) NOT NULL,
+  ConsumoFacturable DECIMAL(12,2) NOT NULL,
+  Propina DECIMAL(12,2) NOT NULL,
+  PRIMARY KEY (IdFacturaGlobal, IdApertura, IdVenta),
+  UNIQUE KEY uq_ticket_global (IdApertura, IdVenta)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
