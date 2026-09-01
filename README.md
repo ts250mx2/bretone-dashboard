@@ -38,9 +38,39 @@ INVOICE_TOKEN_SECRET=una-clave-larga-y-privada
 ISSUER_POSTAL_CODE=00000
 ```
 
-La propina se calcula de forma pseudoaleatoria y estable por comanda entre 10 % y 20 %. Se guarda separada de `ConsumoFacturable` y no se incluye en el importe destinado al CFDI. Las solicitudes quedan en `pendiente_timbrado`; para emitir un CFDI fiscal válido todavía se debe conectar el PAC del negocio y actualizar la solicitud con su UUID.
+La propina se calcula de forma pseudoaleatoria y estable por comanda entre 10 % y 20 %. Se guarda separada de `ConsumoFacturable` y no se incluye en el importe destinado al CFDI.
 
-Las tablas de control se crean automáticamente al abrir el módulo. También pueden instalarse con [`database/001_invoice_requests.sql`](database/001_invoice_requests.sql), [`database/002_complete_billing.sql`](database/002_complete_billing.sql) y [`database/003_invoice_registry.sql`](database/003_invoice_registry.sql), en ese orden.
+### Timbrado ante el SAT
+
+Las facturas nacen en `pendiente_timbrado`. El botón **Timbrar** de `/dashboard/facturacion` genera el CFDI 4.0 y lo envía al PAC (Factura Digital, API v5, `POST /invoice/create`). Al recibir el UUID se guarda el XML timbrado y se descarga el PDF; la factura pasa a `timbrada` y cada renglón ofrece **PDF**, **XML** y **Enviar**.
+
+- **Conceptos:** uno por ticket y por combinación de tasas, porque un concepto del CFDI no admite IVA/IEPS mezclados. Los precios del POS incluyen impuestos, así que la base se calcula hacia atrás; el total del CFDI siempre coincide al centavo con el ticket y el traslado queda dentro de la tolerancia de un centavo que acepta el SAT.
+- **Forma de pago:** se deduce de `tblVentas.Tarjeta` (la que domine el importe) porque un CFDI `PUE` exige una forma concreta. `MetodoPago` siempre es `PUE`.
+- **Factura global:** agrega el nodo `InformacionGlobal` con periodicidad diaria y usa las claves `01010101` / `ACT`.
+- **Doble clic:** la factura se reserva con `TimbradoIniciadoEn` antes de llamar al PAC, de modo que dos clics simultáneos no consuman dos timbres. Si el PAC rechaza el comprobante, el motivo queda en `ErrorTimbrado` y la factura vuelve a estar disponible.
+- **Resguardo:** el XML se guarda en la base (`tblCfdiDocumentosDashboard.Xml`) y, junto con el PDF, en `CFDI_STORAGE_DIR/AAAA/MM/` (por defecto `storage/cfdi`, ignorado por git). Si un archivo falta en disco al consultarlo, se vuelve a descargar del PAC y se archiva.
+- **Correo:** al timbrar se envía automáticamente si la factura trae correo; el botón **Enviar** permite reenviarla a otra dirección. Todos los envíos quedan registrados en `tblCfdiEnviosDashboard`.
+
+Una factura ya timbrada no se cancela desde el dashboard: la cancelación ante el SAT (`POST /invoice/cancel`) todavía no está expuesta en la interfaz.
+
+Variables necesarias para timbrar:
+
+```env
+FACTURA_DIGITAL_API_URL=https://app.facturadigital.com.mx/api/v5
+FACTURA_DIGITAL_API_KEY=<api key del panel del PAC>
+ISSUER_POSTAL_CODE=<C.P. fiscal del restaurante>
+ISSUER_TAX_REGIME=601
+CFDI_SERIE=F
+CFDI_CLAVE_PROD_SERV=90101501
+CFDI_CLAVE_UNIDAD=E48
+CFDI_FORMA_PAGO_EFECTIVO=01
+CFDI_FORMA_PAGO_TARJETA=04
+CFDI_STORAGE_DIR=
+```
+
+Para pruebas sin consumir timbres reales, apunta `FACTURA_DIGITAL_API_URL` a `https://sandbox-app.facturadigital.com.mx/api/v5` con la API key del portal sandbox.
+
+Las tablas de control se crean automáticamente al abrir el módulo. También pueden instalarse con [`database/001_invoice_requests.sql`](database/001_invoice_requests.sql), [`database/002_complete_billing.sql`](database/002_complete_billing.sql), [`database/003_invoice_registry.sql`](database/003_invoice_registry.sql) y [`database/004_cfdi_timbrado.sql`](database/004_cfdi_timbrado.sql), en ese orden.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

@@ -59,7 +59,7 @@ export async function GET(request:NextRequest) {
       return {...row,...amounts,fiscal,expiresAt,selfInvoiceAvailable:!row.IdSolicitud&&!row.IdFacturaGlobal&&!row.IdFactura&&expiresAt.getTime()>=Date.now(),selfInvoiceUrl:buildSelfInvoiceUrl(request.nextUrl.origin,token)};
     }));
     const latestRows = tickets.length ? [] : await query(`SELECT DATE_FORMAT(MAX(FechaVenta),'%Y-%m-%d') AS LatestDate FROM tblVentas WHERE COALESCE(Cancelada,0)=0`);
-    return NextResponse.json({tickets,globalInvoice:globals[0]||null,latestDate:latestRows[0]?.LatestDate||null,taxDefaults:{iva:Number(process.env.DEFAULT_RESTAURANT_IVA_RATE||16),ieps:0,source:'Configuración fiscal del dashboard'}});
+    return NextResponse.json({tickets,globalInvoice:globals[0]||null,latestDate:latestRows[0]?.LatestDate||null,issuerPostalCode:String(process.env.ISSUER_POSTAL_CODE||'').trim()||null,taxDefaults:{iva:Number(process.env.DEFAULT_RESTAURANT_IVA_RATE||16),ieps:0,source:'Configuración fiscal del dashboard'}});
   } catch(error:unknown){console.error('Error loading billing center:',error);return NextResponse.json({error:message(error)||'No fue posible consultar la facturación'},{status:500})}
 }
 

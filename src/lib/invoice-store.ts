@@ -2,14 +2,14 @@ import { query } from '@/lib/db';
 
 let tableReady: Promise<void> | null = null;
 
-async function ensureColumn(name: string, definition: string) {
+async function ensureColumn(table: string, name: string, definition: string) {
   const rows = await query(`
     SELECT COUNT(*) AS Found
     FROM information_schema.COLUMNS
-    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'tblSolicitudesFacturaDashboard' AND COLUMN_NAME = ?
-  `, [name]);
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?
+  `, [table, name]);
   if (!Number(rows[0]?.Found)) {
-    await query(`ALTER TABLE tblSolicitudesFacturaDashboard ADD COLUMN ${name} ${definition}`);
+    await query(`ALTER TABLE ${table} ADD COLUMN ${name} ${definition}`);
   }
 }
 
@@ -43,9 +43,9 @@ export function ensureInvoiceTable() {
         KEY idx_solicitudes_estado (Estado, CreadaEn)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
       `);
-      await ensureColumn('BaseGravable', 'DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER PorcentajePropina');
-      await ensureColumn('IVA', 'DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER BaseGravable');
-      await ensureColumn('IEPS', 'DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER IVA');
+      await ensureColumn('tblSolicitudesFacturaDashboard', 'BaseGravable', 'DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER PorcentajePropina');
+      await ensureColumn('tblSolicitudesFacturaDashboard', 'IVA', 'DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER BaseGravable');
+      await ensureColumn('tblSolicitudesFacturaDashboard', 'IEPS', 'DECIMAL(12,2) NOT NULL DEFAULT 0 AFTER IVA');
       await query(`
         CREATE TABLE IF NOT EXISTS tblConfiguracionFiscalProductosDashboard (
           IdProducto INT NOT NULL,
@@ -137,6 +137,50 @@ export function ensureInvoiceTable() {
           PRIMARY KEY (IdFactura, IdApertura, IdVenta),
           UNIQUE KEY uq_ticket_factura_activa (IdApertura, IdVenta, AsignacionActiva),
           KEY idx_factura_ticket (IdFactura)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+      await ensureColumn('tblFacturasDashboard', 'CodigoPostalExpedicion', 'VARCHAR(5) NULL AFTER CodigoPostal');
+      await ensureColumn('tblFacturasDashboard', 'Serie', 'VARCHAR(25) NULL AFTER UUID');
+      await ensureColumn('tblFacturasDashboard', 'Folio', 'VARCHAR(25) NULL AFTER Serie');
+      await ensureColumn('tblFacturasDashboard', 'TotalTimbrado', 'DECIMAL(12,2) NULL AFTER Folio');
+      await ensureColumn('tblFacturasDashboard', 'ErrorTimbrado', 'VARCHAR(500) NULL AFTER TotalTimbrado');
+      await ensureColumn('tblFacturasDashboard', 'TimbradoIniciadoEn', 'DATETIME NULL AFTER TimbradaEn');
+      await query(`
+        CREATE TABLE IF NOT EXISTS tblCfdiDocumentosDashboard (
+          IdFactura BIGINT UNSIGNED NOT NULL,
+          UUID VARCHAR(36) NOT NULL,
+          Serie VARCHAR(25) NULL,
+          Folio VARCHAR(25) NULL,
+          FechaTimbrado DATETIME NULL,
+          RfcReceptor VARCHAR(13) NOT NULL,
+          Total DECIMAL(12,2) NOT NULL,
+          Ambiente VARCHAR(20) NOT NULL DEFAULT 'produccion',
+          NoCertificado VARCHAR(20) NULL,
+          NoCertificadoSAT VARCHAR(20) NULL,
+          RfcProvCertif VARCHAR(13) NULL,
+          CadenaQR TEXT NULL,
+          XmlRuta VARCHAR(512) NULL,
+          PdfRuta VARCHAR(512) NULL,
+          XmlUrl VARCHAR(512) NULL,
+          PdfUrl VARCHAR(512) NULL,
+          Xml LONGTEXT NULL,
+          CreadaEn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (IdFactura),
+          UNIQUE KEY uq_cfdi_uuid (UUID)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+      `);
+      await query(`
+        CREATE TABLE IF NOT EXISTS tblCfdiEnviosDashboard (
+          IdEnvio BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+          IdFactura BIGINT UNSIGNED NOT NULL,
+          UUID VARCHAR(36) NOT NULL,
+          Correo VARCHAR(254) NOT NULL,
+          Mensaje VARCHAR(500) NULL,
+          Exitoso TINYINT NOT NULL DEFAULT 1,
+          Respuesta VARCHAR(500) NULL,
+          EnviadoEn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          PRIMARY KEY (IdEnvio),
+          KEY idx_envio_factura (IdFactura, EnviadoEn)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
       `);
     })().catch((error) => {

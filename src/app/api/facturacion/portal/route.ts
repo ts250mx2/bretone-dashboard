@@ -151,10 +151,10 @@ export async function POST(request: NextRequest) {
 
       const [header] = await connection.execute(`
         INSERT INTO tblFacturasDashboard
-          (Tipo, FechaOperacion, RFC, RazonSocial, CodigoPostal, RegimenFiscal, UsoCFDI, Correo, NumTickets,
+          (Tipo, FechaOperacion, RFC, RazonSocial, CodigoPostal, CodigoPostalExpedicion, RegimenFiscal, UsoCFDI, Correo, NumTickets,
            BaseGravable, IVA, IEPS, ConsumoFacturable, Propinas)
-        VALUES ('cliente', ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?)
-      `, [sale.FechaOperacion, rfc, legalName, postalCode, taxRegime, cfdiUse, email, fiscal.base, fiscal.iva, fiscal.ieps, fiscal.consumption, amounts.tip]);
+        VALUES ('cliente', ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?)
+      `, [sale.FechaOperacion, rfc, legalName, postalCode, String(process.env.ISSUER_POSTAL_CODE || '').trim() || null, taxRegime, cfdiUse, email, fiscal.base, fiscal.iva, fiscal.ieps, fiscal.consumption, amounts.tip]);
       idFactura = (header as { insertId: number }).insertId;
       await connection.execute(`
         INSERT INTO tblFacturaTicketsDashboard
