@@ -3,7 +3,14 @@ import Anthropic from '@anthropic-ai/sdk';
 import { getSession } from '@/lib/auth';
 import { tools, runTool } from '@/lib/agent/tools';
 import { buildSystemPrompt } from '@/lib/agent/system-prompt';
-import { clienteAnthropic, conCredencial, credencialParaRuta, type CredencialIA } from '@/lib/agent/agente-ia';
+import {
+  correrRonda,
+  credencialParaRuta,
+  esErrorDeAutenticacion,
+  esLimiteDePeticiones,
+  textoDe,
+  type CredencialIA,
+} from '@/lib/agent/agente-ia';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -46,24 +53,17 @@ export async function POST(req: NextRequest) {
 
   try {
     for (let turn = 0; turn < MAX_TOOL_TURNS; turn++) {
-      const ronda = await conCredencial(credencial, (cred) =>
-        clienteAnthropic(cred).messages.create({
-          model: cred.modelo,
-          max_tokens: 8192,
-          system,
-          tools,
-          messages,
-        }),
-      );
+      // Claude o un proveedor con API de OpenAI (DeepSeek...), según lo que HL asigne al agente.
+      const ronda = await correrRonda(credencial, { sistema: system, herramientas: tools, mensajes: messages, maxTokens: 8192 });
       credencial = ronda.credencial;
-      const response = ronda.resultado;
+      const { contenido, pidioHerramientas } = ronda.resultado;
 
-      if (response.stop_reason === 'tool_use') {
-        // Preserve the full assistant turn (thinking + tool_use blocks) before replying with results.
-        messages.push({ role: 'assistant', content: response.content });
+      if (pidioHerramientas) {
+        // Preserve the full assistant turn (tool_use blocks) before replying with results.
+        messages.push({ role: 'assistant', content: contenido });
 
         const toolResults: Anthropic.ToolResultBlockParam[] = [];
-        for (const block of response.content) {
+        for (const block of contenido) {
           if (block.type === 'tool_use') {
             const result = await runTool(block.name, block.input as Record<string, unknown>);
             toolResults.push({ type: 'tool_result', tool_use_id: block.id, content: result });
@@ -74,11 +74,7 @@ export async function POST(req: NextRequest) {
       }
 
       // Terminal turn — collect the visible text.
-      const reply = response.content
-        .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-        .map((b) => b.text)
-        .join('\n')
-        .trim();
+      const reply = textoDe(contenido);
 
       return NextResponse.json({ reply: reply || 'No tengo una respuesta para eso.' });
     }
@@ -87,10 +83,10 @@ export async function POST(req: NextRequest) {
       { reply: 'La consulta requirió demasiados pasos. Intenta reformular la pregunta de forma más específica.' },
     );
   } catch (err) {
-    if (err instanceof Anthropic.AuthenticationError) {
+    if (esErrorDeAutenticacion(err)) {
       return NextResponse.json({ error: 'HL Console rechazó la key de acceso del asistente.' }, { status: 502 });
     }
-    if (err instanceof Anthropic.RateLimitError) {
+    if (esLimiteDePeticiones(err)) {
       return NextResponse.json({ error: 'El asistente está saturado. Intenta de nuevo en unos segundos.' }, { status: 429 });
     }
     const message = err instanceof Error ? err.message : String(err);

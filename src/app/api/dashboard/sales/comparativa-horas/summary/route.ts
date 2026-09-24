@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
 import { getSession } from '@/lib/auth';
-import { clienteAnthropic, conCredencial, credencialParaRuta } from '@/lib/agent/agente-ia';
+import { correrRonda, credencialParaRuta, textoDe } from '@/lib/agent/agente-ia';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -58,19 +57,14 @@ Por favor, elabora un análisis estructurado y resumido (3 párrafos cortos) en 
 No añadas saludos formalistas, ve directo al grano, usando formato markdown limpio y subtítulos elegantes.
 `;
 
-    const { resultado: response } = await conCredencial(credencialInicial.credencial, (cred) =>
-      clienteAnthropic(cred).messages.create({
-        model: cred.modelo,
-        max_tokens: 1500,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    );
+    const { resultado } = await correrRonda(credencialInicial.credencial, {
+      sistema: 'Eres Brioche, el consultor analítico de negocios de La Petite Bretonne.',
+      herramientas: [],
+      mensajes: [{ role: 'user', content: prompt }],
+      maxTokens: 1500,
+    });
 
-    const reply = response.content
-      .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-      .map((b) => b.text)
-      .join('\n')
-      .trim();
+    const reply = textoDe(resultado.contenido);
 
     return NextResponse.json({ summary: reply || 'No fue posible generar el resumen.' });
   } catch (error: any) {

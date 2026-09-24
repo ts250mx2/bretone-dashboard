@@ -1,10 +1,15 @@
 import { createDecipheriv } from 'node:crypto';
 
+/** API que habla el proveedor del agente, según HL Console. */
+export type ApiIA = 'anthropic' | 'openai' | 'gemini';
+
 export interface AgenteIA {
   uuid: string;
   agente: string;
   proveedor: string;
   modelo: string;
+  /** null si HL Console es anterior al campo `api`. */
+  api: ApiIA | null;
   caducidad: string | null;
 }
 
@@ -17,6 +22,7 @@ interface DatosWs {
   agente: string;
   proveedor: string;
   modelo: string;
+  api: ApiIA | null;
   llave: string | null;
   llaveCifrada: string | null;
   caducidad: string | null;
@@ -83,6 +89,7 @@ function validarDatos(value: unknown): DatosWs | null {
     modelo: data.modelo.trim(),
     llave: typeof data.llave === 'string' ? data.llave : null,
     llaveCifrada: typeof data.llaveCifrada === 'string' ? data.llaveCifrada : null,
+    api: data.api === 'anthropic' || data.api === 'openai' || data.api === 'gemini' ? data.api : null,
     caducidad: typeof data.caducidad === 'string' ? data.caducidad : null,
   };
 }
@@ -138,8 +145,8 @@ async function obtenerDatos(forzar = false): Promise<DatosWs> {
 }
 
 export async function obtenerAgente(opciones: { forzar?: boolean } = {}): Promise<AgenteIA> {
-  const { uuid, agente, proveedor, modelo, caducidad } = await obtenerDatos(opciones.forzar);
-  return { uuid, agente, proveedor, modelo, caducidad };
+  const { uuid, agente, proveedor, modelo, api, caducidad } = await obtenerDatos(opciones.forzar);
+  return { uuid, agente, proveedor, modelo, api, caducidad };
 }
 
 export async function obtenerLlave(opciones: { forzar?: boolean } = {}): Promise<LlaveIA> {
