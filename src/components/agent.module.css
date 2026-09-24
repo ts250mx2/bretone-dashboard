@@ -1,35 +1,60 @@
 /* ─── Floating launcher ──────────────────────────────────────────────────── */
 .launcher {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 1.25rem;
   right: 1.5rem;
   z-index: 50;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1.15rem;
+  width: 96px;
+  height: 138px;
+  padding: 0;
   border: none;
-  border-radius: 999px;
+  border-radius: 36px;
   cursor: pointer;
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #E3A21C 0%, #D17A4E 100%);
-  box-shadow: 0 10px 28px rgba(61, 28, 2, 0.28);
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  background: transparent;
+  filter: drop-shadow(0 12px 12px rgba(61, 28, 2, 0.24));
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), filter 0.22s ease;
 }
+.launcherMascot {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.launcherMascot img {
+  position: absolute;
+  bottom: 0;
+  height: auto;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.launcherBrioche { left: 50%; width: 88px; transform: translateX(-50%); z-index: 2; }
 .launcher:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 34px rgba(61, 28, 2, 0.34);
+  transform: translateY(-4px) scale(1.03);
+  filter: drop-shadow(0 16px 15px rgba(61, 28, 2, 0.3));
 }
+.launcher:hover .launcherBrioche { transform: translateX(-50%) rotate(2deg); }
+.launcher:focus-visible { outline: 3px solid #149D92; outline-offset: 4px; }
 .launcherPulse {
+  position: absolute;
+  right: 2px;
+  bottom: 9px;
+  z-index: 3;
   width: 8px;
   height: 8px;
   border-radius: 999px;
   background: #149D92;
   box-shadow: 0 0 0 0 rgba(20, 157, 146, 0.6);
   animation: agentPulse 2s infinite;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 @keyframes agentPulse {
   0% { box-shadow: 0 0 0 0 rgba(20, 157, 146, 0.5); }
@@ -80,6 +105,17 @@
   background: linear-gradient(135deg, #E3A21C, #D17A4E);
   color: #fff;
   flex-shrink: 0;
+  position: relative;
+  overflow: visible;
+  border: 0;
+  cursor: pointer;
+}
+.headerIcon img {
+  position: absolute;
+  bottom: -2px;
+  width: 34px;
+  height: auto;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.25));
 }
 .headerText { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .headerTitle { font-size: 0.92rem; font-weight: 800; line-height: 1.1; }
@@ -100,6 +136,46 @@
 }
 .iconBtn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
 
+.mascotPopover {
+  position: absolute;
+  top: 66px;
+  left: 0.75rem;
+  z-index: 5;
+  width: 250px;
+  padding: 0.75rem;
+  border: 1px solid rgba(61, 28, 2, 0.12);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 18px 40px rgba(61, 28, 2, 0.2);
+  backdrop-filter: blur(12px);
+  animation: pickerIn 0.16s ease-out;
+}
+.mascotPopoverTitle { display: block; margin: 0 0 0.5rem 0.2rem; color: #3D1C02; font-size: 0.72rem; font-weight: 800; }
+.mascotPicker { display: flex; align-items: center; gap: 0.45rem; }
+.mascotPickerCompact { flex-direction: column; align-items: stretch; }
+.mascotOption {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 42px;
+  padding: 0.25rem 0.65rem 0.25rem 0.25rem;
+  border: 1px solid rgba(61, 28, 2, 0.12);
+  border-radius: 12px;
+  background: #fff;
+  color: #3D1C02;
+  font: 700 0.76rem/1.1 inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.mascotOption:hover { transform: translateY(-1px); border-color: #E3A21C; }
+.mascotOptionActive { border-color: #E3A21C; background: #FFF7DF; }
+.mascotOptionImage { display: grid; place-items: end center; width: 34px; height: 36px; overflow: hidden; flex: 0 0 34px; }
+.mascotOptionImage img { width: 28px; height: auto; transform: translateY(5px); }
+.mascotCheck { margin-left: auto; color: #149D92; }
+.pageActions { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; justify-content: flex-end; }
+@keyframes pickerIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
 /* ─── Message list ───────────────────────────────────────────────────────── */
 .body {
   flex: 1;
@@ -110,7 +186,7 @@
   gap: 0.75rem;
   background: #FAF6EF;
 }
-.row { display: flex; }
+.row { display: flex; align-items: flex-end; gap: 0.45rem; }
 .rowUser { justify-content: flex-end; }
 .rowBot { justify-content: flex-start; }
 .bubble {
@@ -134,6 +210,18 @@
   border-bottom-left-radius: 4px;
   box-shadow: 0 1px 3px rgba(61, 28, 2, 0.05);
 }
+.messageAvatar {
+  display: grid;
+  place-items: end center;
+  width: 30px;
+  height: 38px;
+  flex: 0 0 30px;
+  border-radius: 10px;
+  background: linear-gradient(150deg, #fff8df, #f1c364);
+  overflow: hidden;
+  box-shadow: 0 2px 7px rgba(61, 28, 2, 0.12);
+}
+.messageAvatar img { width: 28px; height: auto; transform: translateY(7px); }
 
 /* ─── Empty state ────────────────────────────────────────────────────────── */
 .empty {
@@ -143,20 +231,15 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   color: rgba(61, 28, 2, 0.6);
   padding: 1rem;
 }
-.emptyIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  background: rgba(227, 162, 28, 0.14);
-  color: #E3A21C;
-}
+.mascotStage { position: relative; width: 128px; height: 154px; display: grid; place-items: end center; }
+.mascotAura { position: absolute; inset: 32px 2px 3px; border-radius: 50%; background: radial-gradient(circle, rgba(227,162,28,.28), rgba(227,162,28,0) 70%); }
+.emptyMascot { position: relative; z-index: 1; width: 112px; height: auto; filter: drop-shadow(0 12px 12px rgba(61,28,2,.17)); animation: briocheFloat 3.2s ease-in-out infinite; }
+.sparkle { position: absolute; z-index: 2; right: 3px; top: 37px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #fff; background: #149D92; box-shadow: 0 5px 14px rgba(20,157,146,.28); }
+@keyframes briocheFloat { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-6px) rotate(1deg); } }
 .emptyTitle { font-size: 0.95rem; font-weight: 800; color: #3D1C02; }
 .emptyText { font-size: 0.8rem; max-width: 260px; }
 
@@ -267,15 +350,24 @@
 }
 .page .bubble { max-width: 75%; font-size: 0.92rem; }
 .pageInputRow { padding: 1rem clamp(1rem, 5vw, 3rem); }
+.pageMascot { position: relative; overflow: visible !important; }
+.pageMascot img { position: absolute; bottom: -5px; width: 50px; height: auto; filter: drop-shadow(0 5px 5px rgba(61,28,2,.22)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .emptyMascot { animation: none; }
+  .launcherPulse { animation: none; }
+  .mascotPopover { animation: none; }
+}
 
 /* ─── Responsive (mobile phones) ─────────────────────────────────────────── */
 @media (max-width: 480px) {
   .launcher {
-    bottom: 1rem;
-    right: 1rem;
-    padding: 0.7rem 0.95rem;
-    font-size: 0.82rem;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    width: 78px;
+    height: 112px;
   }
+  .launcherBrioche { width: 72px; }
   .panel {
     inset: auto 0 0 0;
     width: 100%;
@@ -288,4 +380,7 @@
   }
   .bubble { max-width: 90%; }
   .page .bubble { max-width: 88%; }
+  .pageActions { width: 100%; justify-content: space-between; }
+  .pageActions .mascotPicker { flex: 1; }
+  .pageActions .mascotOption { flex: 1; }
 }

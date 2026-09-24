@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Send, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { useAgent } from '@/lib/agent/AgentContext';
 import styles from './agent.module.css';
 
@@ -13,7 +14,8 @@ const SUGGESTIONS = [
 ];
 
 export default function AgentChat({ variant = 'widget' }: { variant?: 'widget' | 'page' }) {
-  const { messages, loading, send } = useAgent();
+  const { messages, loading, send, mascot } = useAgent();
+  const mascotSrc = mascot === 'crepa' ? '/crepa-agent.png' : '/brioche-agent.png';
   const [input, setInput] = useState('');
   const bodyRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
@@ -51,7 +53,18 @@ export default function AgentChat({ variant = 'widget' }: { variant?: 'widget' |
       <div className={bodyClass} ref={bodyRef}>
         {messages.length === 0 && !loading ? (
           <div className={styles.empty}>
-            <div className={styles.emptyIcon}><Sparkles size={26} /></div>
+            <div className={styles.mascotStage}>
+              <span className={styles.mascotAura} />
+              <Image
+                className={styles.emptyMascot}
+                src={mascotSrc}
+                alt={`${mascot === 'crepa' ? 'Crepa' : 'Telera de pan'}, mascota de Brioche`}
+                width={180}
+                height={240}
+                priority
+              />
+              <span className={styles.sparkle}><Sparkles size={18} /></span>
+            </div>
             <div className={styles.emptyTitle}>Hola, soy Brioche 🥐</div>
             <div className={styles.emptyText}>
               Tu asistente de ventas de La Petite Bretonne. Pregúntame sobre ventas, productos, tendencias o lo que necesites.
@@ -65,6 +78,11 @@ export default function AgentChat({ variant = 'widget' }: { variant?: 'widget' |
         ) : (
           messages.map((m, i) => (
             <div key={i} className={`${styles.row} ${m.role === 'user' ? styles.rowUser : styles.rowBot}`}>
+              {m.role === 'assistant' && (
+                <span className={styles.messageAvatar} aria-hidden="true">
+                  <Image src={mascotSrc} alt="" width={34} height={45} />
+                </span>
+              )}
               <div className={`${styles.bubble} ${m.role === 'user' ? styles.bubbleUser : styles.bubbleBot}`}>
                 {m.content}
               </div>

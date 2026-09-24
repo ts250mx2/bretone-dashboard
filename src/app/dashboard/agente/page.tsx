@@ -1,23 +1,26 @@
 'use client';
 
-import { Bot, RotateCcw } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
+import Image from 'next/image';
 import { useAgent } from '@/lib/agent/AgentContext';
 import AgentChat from '@/components/AgentChat';
+import MascotPicker from '@/components/MascotPicker';
 import styles from '@/components/agent.module.css';
 
 export default function AgentePage() {
-  const { reset, messages } = useAgent();
+  const { reset, messages, mascot } = useAgent();
+  const mascotSrc = mascot === 'crepa' ? '/crepa-agent.png' : '/brioche-agent.png';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100dvh - 7rem)', overflow: 'hidden' }}>
       <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-          <div style={{
+          <div className={styles.pageMascot} style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             width: 46, height: 46, borderRadius: 14,
             background: 'linear-gradient(135deg, #E3A21C, #D17A4E)', color: '#fff',
           }}>
-            <Bot size={24} />
+            <Image src={mascotSrc} alt={mascot === 'crepa' ? 'Crepa' : 'Telera de pan'} width={52} height={70} priority />
           </div>
           <div>
             <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#3D1C02', lineHeight: 1.15 }}>
@@ -29,6 +32,8 @@ export default function AgentePage() {
           </div>
         </div>
 
+        <div className={styles.pageActions}>
+          <MascotPicker />
         <button
           onClick={reset}
           disabled={messages.length === 0}
@@ -42,6 +47,7 @@ export default function AgentePage() {
         >
           <RotateCcw size={15} /> Nueva conversación
         </button>
+        </div>
       </div>
 
       <div className={styles.page}>

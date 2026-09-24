@@ -5,12 +5,17 @@ import React, { createContext, useContext, useEffect, useRef, useState, useCallb
 export type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
 const STORAGE_KEY = 'bretone_agent_chat';
+const MASCOT_STORAGE_KEY = 'bretone_agent_mascot';
+
+export type AgentMascot = 'telera' | 'crepa';
 
 interface AgentContextValue {
   messages: ChatMessage[];
   loading: boolean;
   open: boolean;
   setOpen: (open: boolean) => void;
+  mascot: AgentMascot;
+  setMascot: (mascot: AgentMascot) => void;
   send: (text: string) => Promise<void>;
   reset: () => void;
 }
@@ -27,6 +32,10 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [mascot, setMascotState] = useState<AgentMascot>(() => {
+    if (typeof window === 'undefined') return 'telera';
+    return localStorage.getItem(MASCOT_STORAGE_KEY) === 'crepa' ? 'crepa' : 'telera';
+  });
 
   // Ref mirrors state so async callbacks always read the latest conversation.
   const messagesRef = useRef<ChatMessage[]>([]);
@@ -85,8 +94,17 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
 
   const reset = useCallback(() => apply([]), [apply]);
 
+  const setMascot = useCallback((nextMascot: AgentMascot) => {
+    setMascotState(nextMascot);
+    try {
+      localStorage.setItem(MASCOT_STORAGE_KEY, nextMascot);
+    } catch {
+      /* storage may be unavailable */
+    }
+  }, []);
+
   return (
-    <AgentContext.Provider value={{ messages, loading, open, setOpen, send, reset }}>
+    <AgentContext.Provider value={{ messages, loading, open, setOpen, mascot, setMascot, send, reset }}>
       {children}
     </AgentContext.Provider>
   );
