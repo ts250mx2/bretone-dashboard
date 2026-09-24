@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { getSession } from '@/lib/auth';
+import { clienteAnthropic, conCredencial, credencialParaRuta } from '@/lib/agent/agente-ia';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-4-8';
 
 // Helper to format currency in MXN
 const fmt = (n: number) =>
@@ -17,11 +16,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No autorizado.' }, { status: 401 });
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json(
-      { error: 'El asistente no está configurado: falta ANTHROPIC_API_KEY en el servidor.' },
-      { status: 503 }
-    );
+  // HL Console determina el modelo y guarda la llave del agente configurado en HL_AGENTE.
+  const credencialInicial = await credencialParaRuta();
+  if (!credencialInicial.ok) {
+    return NextResponse.json({ error: credencialInicial.error }, { status: 503 });
   }
 
   try {
@@ -60,12 +58,13 @@ Por favor, elabora un análisis estructurado y resumido (3 párrafos cortos) en 
 No añadas saludos formalistas, ve directo al grano, usando formato markdown limpio y subtítulos elegantes.
 `;
 
-    const client = new Anthropic();
-    const response = await client.messages.create({
-      model: MODEL,
-      max_tokens: 1500,
-      messages: [{ role: 'user', content: prompt }],
-    });
+    const { resultado: response } = await conCredencial(credencialInicial.credencial, (cred) =>
+      clienteAnthropic(cred).messages.create({
+        model: cred.modelo,
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    );
 
     const reply = response.content
       .filter((b): b is Anthropic.TextBlock => b.type === 'text')

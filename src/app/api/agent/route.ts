@@ -3,11 +3,11 @@ import Anthropic from '@anthropic-ai/sdk';
 import { getSession } from '@/lib/auth';
 import { tools, runTool } from '@/lib/agent/tools';
 import { buildSystemPrompt } from '@/lib/agent/system-prompt';
+import { clienteAnthropic, conCredencial, credencialParaRuta, type CredencialIA } from '@/lib/agent/agente-ia';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const MODEL = 'claude-opus-4-8';
 const MAX_TOOL_TURNS = 8;
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
@@ -17,13 +17,6 @@ export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: 'No autorizado.' }, { status: 401 });
-  }
-
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json(
-      { error: 'El asistente no está configurado: falta ANTHROPIC_API_KEY en el servidor.' },
-      { status: 503 },
-    );
   }
 
   let body: { messages?: ChatMessage[] };
@@ -41,21 +34,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No hay mensajes para procesar.' }, { status: 400 });
   }
 
-  const client = new Anthropic();
+  // HL Console determina el modelo y guarda la llave del agente configurado en HL_AGENTE.
+  const credencialInicial = await credencialParaRuta();
+  if (!credencialInicial.ok) {
+    return NextResponse.json({ error: credencialInicial.error }, { status: 503 });
+  }
+  let credencial: CredencialIA = credencialInicial.credencial;
+
   const system = buildSystemPrompt();
   const messages: Anthropic.MessageParam[] = history.map((m) => ({ role: m.role, content: m.content }));
 
   try {
     for (let turn = 0; turn < MAX_TOOL_TURNS; turn++) {
-      const response = await client.messages.create({
-        model: MODEL,
-        max_tokens: 8192,
-        thinking: { type: 'adaptive' },
-        output_config: { effort: 'high' },
-        system,
-        tools,
-        messages,
-      });
+      const ronda = await conCredencial(credencial, (cred) =>
+        clienteAnthropic(cred).messages.create({
+          model: cred.modelo,
+          max_tokens: 8192,
+          system,
+          tools,
+          messages,
+        }),
+      );
+      credencial = ronda.credencial;
+      const response = ronda.resultado;
 
       if (response.stop_reason === 'tool_use') {
         // Preserve the full assistant turn (thinking + tool_use blocks) before replying with results.
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (err) {
     if (err instanceof Anthropic.AuthenticationError) {
-      return NextResponse.json({ error: 'La clave de API de Anthropic es inválida.' }, { status: 502 });
+      return NextResponse.json({ error: 'HL Console rechazó la key de acceso del asistente.' }, { status: 502 });
     }
     if (err instanceof Anthropic.RateLimitError) {
       return NextResponse.json({ error: 'El asistente está saturado. Intenta de nuevo en unos segundos.' }, { status: 429 });
